@@ -1,1 +1,0 @@
-export { serverConfig } from './server';

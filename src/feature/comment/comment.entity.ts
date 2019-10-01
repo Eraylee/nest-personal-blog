@@ -4,13 +4,16 @@ import {
   Column,
   JoinColumn,
   ManyToOne,
-  OneToMany,
+  Tree,
+  TreeParent,
+  TreeChildren,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ArticleEntity } from './article.entity';
+import { ArticleEntity } from '../article/article.entity';
 
 @Entity('comment')
+@Tree('materialized-path')
 export class CommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,7 +25,7 @@ export class CommentEntity {
   authorMail: string;
 
   @Column()
-  authorUrl: boolean;
+  authorUrl: string;
 
   @Column()
   authorIp: string;
@@ -39,11 +42,11 @@ export class CommentEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(type => CommentEntity, comment => comment.children)
-  parent: CommentEntity;
-
-  @OneToMany(type => CommentEntity, comment => comment.parent)
+  @TreeChildren()
   children: CommentEntity[];
+
+  @TreeParent()
+  parent: CommentEntity;
 
   @ManyToOne(type => ArticleEntity)
   @JoinColumn()

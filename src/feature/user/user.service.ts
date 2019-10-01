@@ -1,25 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import * as crypto from 'crypto';
 import { Repository, DeleteResult } from 'typeorm';
+import { InjectConfig } from 'nestjs-config';
 import { BadRequestException } from '@nestjs/common/exceptions';
+
 import { UserEntity } from './user.entity';
 import { UserRO, UsersRO } from './user.interface';
-import { serverConfig } from '../../config';
 import {
   CreateUserDto,
   QueryUserDto,
   LoginUserDto,
   UpdateUserDto,
-} from './dto/index.dto';
+} from './dto';
 // tslint:disable-next-line: no-var-requires
 const jwt = require('jsonwebtoken');
+
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    protected readonly userRepository: Repository<UserEntity | null>,
+    protected readonly userRepository: Repository<UserEntity>,
+    @InjectConfig()
+    private readonly config,
   ) {}
   /**
    * 通过id查询用户
@@ -27,6 +30,9 @@ export class UserService {
    */
   async findById(id: number): Promise<UserRO> {
     const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new BadRequestException(`id为${id}的用户不存在`);
+    }
     return this.buildUserRO(user);
   }
   /**
@@ -61,7 +67,7 @@ export class UserService {
       updatedAt,
       token,
     };
-    return { user };
+    return user;
   }
   /**
    * 查询
@@ -74,16 +80,16 @@ export class UserService {
     let page = 1;
     qb.where('1 = 1');
 
-    if ('username' in query) {
-      qb.andWhere('role.name LIKE :username', { name: `%${query.username}%` });
+    if (query.username) {
+      qb.andWhere('user.name LIKE :username', { name: `%${query.username}%` });
     }
-    if ('nickname' in query) {
-      qb.andWhere('role.name LIKE :nickname', { name: `%${query.nickname}%` });
+    if (query.nickname) {
+      qb.andWhere('user.name LIKE :nickname', { name: `%${query.nickname}%` });
     }
-    if ('limit' in query) {
+    if (query.limit) {
       limit = query.limit;
     }
-    if ('page' in query) {
+    if (query.page) {
       page = query.page;
       offset = limit * (page - 1);
     }
@@ -98,8 +104,8 @@ export class UserService {
       .addSelect('user.nickname')
       .addSelect('user.createdAt')
       .addSelect('user.updatedAt');
-    const users = await qb.getMany();
-    return { users, total, page };
+    const data = await qb.getMany();
+    return { data, total, page };
   }
   /**
    * 创建用户
@@ -133,35 +139,38 @@ export class UserService {
    * 修改用户
    * @param dto
    */
-  async modifyInfo(dto: UpdateUserDto): Promise<UserRO> {
-    const toUpdate = await this.userRepository.findOne(dto.id);
+  async update(id: number, dto: UpdateUserDto): Promise<UserRO> {
+    const toUpdate: UserEntity = await this.userRepository.findOne(id);
     if (!toUpdate) {
-      throw new BadRequestException('用户不存在');
+      throw new BadRequestException(`id为${id}的用户不存在`);
     }
-    const updated = Object.assign(toUpdate, dto);
-    const savedUser = await this.userRepository.save(updated);
+    if (dto.nickname) {
+      toUpdate.nickname = dto.nickname;
+    }
+    if (dto.password) {
+      toUpdate.password = crypto
+        .createHmac('sha256', dto.password)
+        .digest('hex');
+    }
+    if (dto.role) {
+      toUpdate.role = dto.role;
+    }
+    const savedUser = await this.userRepository.save(toUpdate);
     return this.buildUserRO(savedUser);
   }
-
   /**
    *  生成token
    * @param user
    */
   public generateJWT(user) {
-    const today = new Date();
-    const exp = new Date(today);
-
-    exp.setDate(today.getDate() + 60);
-
     return jwt.sign(
       {
         id: user.id,
         username: user.username,
         nickname: user.nickname,
         role: user.role,
-        exp: exp.getTime() / 1000,
       },
-      serverConfig.SECRET,
+      this.config.get('auth.JWT_SECRET'),
     );
   }
   /**
@@ -177,6 +186,6 @@ export class UserService {
       updatedAt: user.updatedAt,
     };
 
-    return { user: userRO };
+    return userRO;
   }
 }

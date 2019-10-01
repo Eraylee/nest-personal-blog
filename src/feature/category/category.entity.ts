@@ -1,15 +1,17 @@
 import {
   Entity,
+  Tree,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
+  TreeParent,
+  TreeChildren,
   OneToMany,
 } from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
 
 @Entity('category')
-export class Category {
+@Tree('materialized-path')
+export class CategoryEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,11 +21,11 @@ export class Category {
   @Column()
   enabled: boolean;
 
-  @ManyToOne(type => Category, category => category.children)
-  parent: Category;
+  @TreeChildren()
+  children: CategoryEntity[];
 
-  @OneToMany(type => Category, category => category.parent)
-  children: Category[];
+  @TreeParent()
+  parent: CategoryEntity;
 
   @OneToMany(type => ArticleEntity, article => article.category)
   articles: ArticleEntity[];

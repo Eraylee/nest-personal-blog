@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
-import { Category } from '../category/category.entity';
+import { CategoryEntity } from '../category/category.entity';
 import { TagEntity } from '../tag/tag.entity';
 
 @Entity('article')
@@ -24,31 +24,46 @@ export class ArticleEntity {
   @Column()
   description: string;
 
-  @Column()
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
   isTop: boolean;
 
   @Column('text')
   content: string;
 
-  @Column()
+  @Column({
+    type: 'boolean',
+    default: true,
+  })
   allowComment: boolean;
 
-  @Column()
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
   isDeleted: boolean;
 
-  @Column()
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
   isDraft: boolean;
-
-  @Column()
-  isOriginal: boolean;
 
   @Column()
   cover: string;
 
-  @Column('int')
+  @Column({
+    type: 'int',
+    default: 0,
+  })
   likeNum: number;
 
-  @Column('int')
+  @Column({
+    type: 'int',
+    default: 0,
+  })
   viewsNum: number;
 
   @CreateDateColumn()
@@ -61,11 +76,9 @@ export class ArticleEntity {
   @JoinColumn()
   user: UserEntity;
 
-  @ManyToOne(type => Category, category => category.articles, {
-    cascade: true,
-  })
+  @ManyToOne(type => CategoryEntity, category => category)
   @JoinColumn()
-  category: Category;
+  category: CategoryEntity;
 
   @ManyToMany(type => TagEntity, tag => tag.articles)
   @JoinTable()

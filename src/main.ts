@@ -2,8 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { initSwagger } from './common/swagger/swagger';
-import { serverConfig } from './config';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+
+const port = Number(process.env.PORT) || 5001;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,11 +21,11 @@ async function bootstrap() {
   );
   // 全局使用过滤器
   app.useGlobalFilters(new HttpExceptionFilter());
-  await app.listen(serverConfig.PORT);
+  await app.listen(port);
 }
 
 bootstrap().then(() => {
   new Logger('Nest server').log(
-    `Nest server listening on http://localhost:${serverConfig.PORT}`,
+    `Nest server listening on http://localhost:${port}`,
   );
 });

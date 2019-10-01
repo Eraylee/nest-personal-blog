@@ -1,16 +1,15 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Allow } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class UpdateUserDto {
-  @ApiModelProperty({ description: '用户id' })
+  @ApiModelProperty({ description: '用户昵称' })
   @IsNotEmpty()
-  readonly id: number;
+  readonly nickname: string;
 
   @ApiModelProperty({ description: '用户密码' })
   @IsNotEmpty()
   readonly password: string;
 
-  @ApiModelProperty({ description: '用户昵称' })
-  @IsNotEmpty()
-  readonly nickname: string;
+  @Allow()
+  readonly role: string;
 }

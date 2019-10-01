@@ -16,26 +16,41 @@ import {
   QueryUserDto,
   LoginUserDto,
   UpdateUserDto,
-} from './dto/index.dto';
+} from './dto';
+
 import { UserService } from './user.service';
-import { RolesGuard } from '../../common/guards/role.guard';
-import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard, AuthGuard } from '../../common/guards';
+import { Roles } from '../../common/decorators';
+
 @ApiBearerAuth()
 @ApiUseTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  /**
+   * 通过id查询用户
+   * @param query
+   * @return Promise<Result>
+   */
+  @ApiOperation({ title: '通过id查询用户' })
+  @UseGuards(AuthGuard)
+  @Get(':id')
+  async getUserById(@Param('id') id: number) {
+    return {
+      code: 200,
+      message: '查询成功',
+      data: await this.userService.findById(id),
+    };
+  }
   /**
    * 查询用户
    * @param query
    * @return Promise<Result>
    */
   @ApiOperation({ title: '查询用户' })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard)
   @Get()
-  async find(@Query() query: QueryUserDto) {
+  async getUsers(@Query() query: QueryUserDto) {
     return {
       code: 200,
       message: '查询成功',
@@ -63,8 +78,10 @@ export class UserController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '新增用户' })
+  @UseGuards(RolesGuard, AuthGuard)
+  @Roles('admin')
   @Post()
-  async create(@Body() user: CreateUserDto): Promise<Result> {
+  async createUser(@Body() user: CreateUserDto): Promise<Result> {
     return {
       code: 200,
       message: '新增成功',
@@ -78,10 +95,10 @@ export class UserController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '删除用户' })
+  @UseGuards(RolesGuard, AuthGuard)
   @Roles('admin')
-  @UseGuards(RolesGuard)
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async deleteUser(@Param('id') id: number) {
     return {
       code: 200,
       message: '删除成功',
@@ -95,14 +112,17 @@ export class UserController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '修改用户' })
+  @UseGuards(RolesGuard, AuthGuard)
   @Roles('admin')
-  @UseGuards(RolesGuard)
-  @Put('info')
-  async modifyInfo(@Body() user: UpdateUserDto): Promise<Result> {
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: number,
+    @Body() user: UpdateUserDto,
+  ): Promise<Result> {
     return {
       code: 200,
       message: '修改成功',
-      data: await this.userService.modifyInfo(user),
+      data: await this.userService.update(id, user),
     };
   }
 }
