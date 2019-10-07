@@ -48,7 +48,6 @@ export class UserController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '查询用户' })
-  @UseGuards(AuthGuard)
   @Get()
   async getUsers(@Query() query: QueryUserDto) {
     return {

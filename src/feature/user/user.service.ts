@@ -58,11 +58,12 @@ export class UserService {
     }
 
     const token = await this.generateJWT(_user);
-    const { username, nickname, id, createdAt, updatedAt } = _user;
+    const { username, nickname, id, role, createdAt, updatedAt } = _user;
     const user = {
       username,
       nickname,
       id,
+      role,
       createdAt,
       updatedAt,
       token,
@@ -100,6 +101,7 @@ export class UserService {
     qb.limit(limit)
       .offset(offset)
       .select('user.id')
+      .addSelect('user.role')
       .addSelect('user.username')
       .addSelect('user.nickname')
       .addSelect('user.createdAt')
@@ -182,6 +184,7 @@ export class UserService {
       id: user.id,
       username: user.username,
       nickname: user.nickname,
+      role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
