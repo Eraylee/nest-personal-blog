@@ -19,7 +19,7 @@ import { UserModule } from '../../feature/user/user.module';
       }),
       inject: [ConfigService],
     }),
-    UserModule,
+    forwardRef(() => UserModule),
   ],
   providers: [AuthService, AuthStrategy],
   exports: [AuthService, PassportModule],

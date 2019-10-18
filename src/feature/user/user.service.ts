@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import { Repository, DeleteResult } from 'typeorm';
-import { InjectConfig } from 'nestjs-config';
 import { BadRequestException } from '@nestjs/common/exceptions';
 
+import { AuthService } from '../../common/auth/auth.service';
 import { UserEntity } from './user.entity';
 import { UserRO, UsersRO } from './user.interface';
 import {
@@ -13,16 +13,14 @@ import {
   LoginUserDto,
   UpdateUserDto,
 } from './dto';
-// tslint:disable-next-line: no-var-requires
-const jwt = require('jsonwebtoken');
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     protected readonly userRepository: Repository<UserEntity>,
-    @InjectConfig()
-    private readonly config,
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
   ) {}
   /**
    * 通过id查询用户
@@ -56,9 +54,13 @@ export class UserService {
     if (!_user) {
       throw new BadRequestException('用户名或者密码错误');
     }
-
-    const token = await this.generateJWT(_user);
     const { username, nickname, id, role, createdAt, updatedAt } = _user;
+    const token = await this.authService.createToken({
+      id,
+      username,
+      nickname,
+      role,
+    });
     const user = {
       username,
       nickname,
@@ -159,21 +161,6 @@ export class UserService {
     }
     const savedUser = await this.userRepository.save(toUpdate);
     return this.buildUserRO(savedUser);
-  }
-  /**
-   *  生成token
-   * @param user
-   */
-  public generateJWT(user) {
-    return jwt.sign(
-      {
-        id: user.id,
-        username: user.username,
-        nickname: user.nickname,
-        role: user.role,
-      },
-      this.config.get('auth.JWT_SECRET'),
-    );
   }
   /**
    * 构建UserRO

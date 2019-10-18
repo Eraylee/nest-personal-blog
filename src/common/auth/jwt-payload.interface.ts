@@ -3,5 +3,4 @@ export interface JwtPayload {
   username: string;
   nickname: string;
   role: string;
-  exp: number;
 }

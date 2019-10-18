@@ -4,7 +4,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { initSwagger } from './common/swagger/swagger';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
-const port = Number(process.env.PORT) || 5001;
+const port = Number(process.env.PORT) || 5050;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
