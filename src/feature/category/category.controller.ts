@@ -55,7 +55,7 @@ export class CategoryController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '新增分类' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Post()
   async createcategory(@Body() category: CreateCategoryDto): Promise<Result> {
@@ -71,7 +71,7 @@ export class CategoryController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '删除分类' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Delete(':id')
   async deletecategory(@Param('id') id: number) {
@@ -87,7 +87,7 @@ export class CategoryController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '修改分类' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Put(':id')
   async updateUser(

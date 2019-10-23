@@ -58,7 +58,7 @@ export class TagController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '新增标签' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Post()
   async createTag(@Body() tag: CreateTagDto): Promise<Result> {
@@ -74,7 +74,7 @@ export class TagController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '删除标签' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Delete(':id')
   async deleteTag(@Param('id') id: number) {
@@ -91,7 +91,7 @@ export class TagController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '修改标签' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Put(':id')
   async updateTag(

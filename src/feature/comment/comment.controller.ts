@@ -74,7 +74,7 @@ export class CommentController {
    * @param comment
    */
   @ApiOperation({ title: '修改评论' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Put(':id')
   async updateComment(
@@ -92,7 +92,7 @@ export class CommentController {
    * @param id
    */
   @ApiOperation({ title: '删除评论' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Delete(':id')
   async deleteComment(@Param('id') id: number) {

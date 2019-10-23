@@ -76,8 +76,8 @@ export class UserController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '新增用户' })
-  @UseGuards(RolesGuard, AuthGuard)
-  @Roles('admin')
+  // @UseGuards(AuthGuard, RolesGuard)
+  // @Roles('admin')
   @Post()
   async createUser(@Body() user: CreateUserDto): Promise<Result> {
     return {
@@ -93,7 +93,7 @@ export class UserController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '删除用户' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Delete(':id')
   async deleteUser(@Param('id') id: number) {
@@ -110,7 +110,7 @@ export class UserController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '修改用户' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Put(':id')
   async updateUser(

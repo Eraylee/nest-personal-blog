@@ -59,7 +59,7 @@ export class ArticleController {
    * @param user
    */
   @ApiOperation({ title: '新增文章' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Post()
   async createArticle(
@@ -77,7 +77,7 @@ export class ArticleController {
    * @param id
    */
   @ApiOperation({ title: '删除文章' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Delete(':id')
   async deleteArticle(@Param('id') id: number) {
@@ -94,7 +94,7 @@ export class ArticleController {
    * @param article
    */
   @ApiOperation({ title: '修改文章' })
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Put(':id')
   async updateArticle(

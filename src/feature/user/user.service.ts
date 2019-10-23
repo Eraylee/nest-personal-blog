@@ -116,7 +116,7 @@ export class UserService {
    * @param dto
    */
   async create(dto: CreateUserDto): Promise<UserRO> {
-    const { username, password, nickname } = dto;
+    const { username, password, nickname, role } = dto;
     const user = await this.userRepository.findOne({ username });
 
     if (user) {
@@ -127,6 +127,7 @@ export class UserService {
     newUser.username = username;
     newUser.password = password;
     newUser.nickname = nickname;
+    newUser.role = role;
 
     const savedUser = await this.userRepository.save(newUser);
     return this.buildUserRO(savedUser);
