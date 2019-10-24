@@ -34,7 +34,7 @@ export class CategoryService {
 
     category.name = dto.name;
     category.enabled = dto.enabled;
-    if (dto.parentId) {
+    if ('parentId' in dto) {
       const parent = await this.categoryEntity.findOne(dto.parentId);
       if (!parent) {
         throw new BadRequestException(`id为${dto.parentId}的分类不存在`);
@@ -52,13 +52,13 @@ export class CategoryService {
     if (!category) {
       throw new BadRequestException(`id为${id}的分类不存在`);
     }
-    if (dto.name) {
+    if ('name' in dto) {
       category.name = dto.name;
     }
-    if (dto.enabled) {
+    if ('enabled' in dto) {
       category.enabled = dto.enabled;
     }
-    if (dto.parentId) {
+    if ('parentId' in dto) {
       const parent = await this.categoryEntity.findOne(dto.parentId);
       if (!parent) {
         throw new BadRequestException(`id为${dto.parentId}的分类不存在`);

@@ -38,13 +38,13 @@ export class TagService {
     let page = 1;
     qb.where('1 = 1');
 
-    if (query.name) {
+    if ('name' in query) {
       qb.andWhere('tab.name LIKE :name', { name: `%${query.name}%` });
     }
-    if (query.limit) {
+    if ('limit' in query) {
       limit = query.limit;
     }
-    if (query.page) {
+    if ('page' in query) {
       page = query.page;
       offset = limit * (page - 1);
     }
@@ -67,9 +67,7 @@ export class TagService {
     if (!tag) {
       throw new BadRequestException(`id为${id}的标签不存在`);
     }
-    if (dto.name) {
-      tag.name = dto.name;
-    }
+    tag.name = dto.name;
     return this.tagEntity.save(tag);
   }
   /**

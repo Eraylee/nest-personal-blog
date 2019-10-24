@@ -5,5 +5,5 @@ import { ApiModelProperty } from '@nestjs/swagger';
 export class QueryTagDto extends QueryDto {
   @ApiModelProperty({ required: false, description: '标签名' })
   @Allow()
-  readonly name: string;
+  readonly name?: string;
 }

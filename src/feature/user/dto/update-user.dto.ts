@@ -1,8 +1,9 @@
-import { IsNotEmpty, IsIn, IsByteLength } from 'class-validator';
+import { IsNotEmpty, IsIn, IsByteLength, IsDefined } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class UpdateUserDto {
   @ApiModelProperty({ description: '用户昵称' })
+  @IsDefined()
   @IsNotEmpty()
   readonly nickname: string;
 
@@ -10,9 +11,10 @@ export class UpdateUserDto {
   @IsByteLength(6, 18, {
     message: '密码长度不是6-18位',
   })
-  readonly password: string;
+  readonly password?: string;
 
   @ApiModelProperty({ description: '角色', enum: ['regular', 'admin'] })
+  @IsDefined()
   @IsIn(['regular', 'admin'])
   readonly role: string;
 }

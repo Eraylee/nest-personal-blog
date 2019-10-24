@@ -34,7 +34,7 @@ export class UserController {
   @ApiOperation({ title: '通过id查询用户' })
   @UseGuards(AuthGuard)
   @Get(':id')
-  async getUserById(@Param('id') id: number) {
+  async getUserById(@Param('id') id: number): Promise<Result> {
     return {
       code: 200,
       message: '查询成功',
@@ -48,7 +48,7 @@ export class UserController {
    */
   @ApiOperation({ title: '查询用户' })
   @Get()
-  async getUsers(@Query() query: QueryUserDto) {
+  async getUsers(@Query() query: QueryUserDto): Promise<Result> {
     return {
       code: 200,
       message: '查询成功',
@@ -69,7 +69,6 @@ export class UserController {
       data: await this.userService.login(user),
     };
   }
-
   /**
    * 新增用户
    * @param username
@@ -96,7 +95,7 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Delete(':id')
-  async deleteUser(@Param('id') id: number) {
+  async deleteUser(@Param('id') id: number): Promise<Result> {
     return {
       code: 200,
       message: '删除成功',

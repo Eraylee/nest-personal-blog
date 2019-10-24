@@ -1,20 +1,28 @@
-import { IsNotEmpty, Allow, IsByteLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  Allow,
+  IsDefined,
+  IsBoolean,
+  IsByteLength,
+} from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class UpdateArticleDto {
   @ApiModelProperty({ description: '文章标题' })
+  @IsDefined()
   @IsNotEmpty()
   @IsByteLength(0, 30, {
-    message: '标题长度为0~30位',
+    message: '标题长度为1~31位',
   })
   readonly title: string;
 
   @ApiModelProperty({ description: '描述' })
+  @IsDefined()
   @IsNotEmpty()
   readonly description: string;
 
   @ApiModelProperty({ required: false, description: '是否置顶' })
-  @Allow()
+  @IsBoolean()
   readonly isTop: boolean;
 
   @ApiModelProperty({ required: false, description: '内容' })
@@ -22,11 +30,11 @@ export class UpdateArticleDto {
   readonly content: string;
 
   @ApiModelProperty({ required: false, description: '是否允许评论' })
-  @Allow()
+  @IsBoolean()
   readonly allowComment: boolean;
 
   @ApiModelProperty({ required: false, description: '是否草稿' })
-  @Allow()
+  @IsBoolean()
   readonly isDraft: boolean;
 
   @ApiModelProperty({ required: false, description: '文章封面' })
@@ -34,10 +42,12 @@ export class UpdateArticleDto {
   readonly cover: string;
 
   @ApiModelProperty({ description: '文章分类id' })
+  @IsDefined()
   @IsNotEmpty()
   readonly categoryId: number;
 
   @ApiModelProperty({ description: '文章标签' })
+  @IsDefined()
   @IsNotEmpty()
   readonly tags: string[];
 }

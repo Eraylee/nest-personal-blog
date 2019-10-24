@@ -10,7 +10,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   initSwagger(app);
   // 注册并配置全局验证管道
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      skipMissingProperties: true,
+      forbidUnknownValues: true,
+    }),
+  );
   // 全局使用过滤器
   app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(port);

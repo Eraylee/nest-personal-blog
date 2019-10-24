@@ -55,7 +55,7 @@ export class CommentService {
       throw new BadRequestException(`id为${dto.articleId}的文章不存在`);
     }
     comment.article = article;
-    if (dto.parentId) {
+    if ('parentId' in dto) {
       const parent = await this.commentRepository.findOne(dto.parentId);
       if (!parent) {
         throw new BadRequestException(`id为${dto.parentId}的评论不存在`);
@@ -66,7 +66,7 @@ export class CommentService {
     comment.authorAgent = agent;
     comment.authorMail = dto.authorMail;
     comment.authorName = dto.authorName;
-    if (dto.authorUrl) {
+    if ('authorUrl' in dto) {
       comment.authorUrl = dto.authorUrl;
     }
     return await this.commentRepository.save(comment);
@@ -80,7 +80,7 @@ export class CommentService {
     if (!comment) {
       throw new BadRequestException(`id为${id}的评论不存在`);
     }
-    if (dto.authorUrl) {
+    if ('authorUrl' in dto) {
       comment.authorUrl = dto.authorUrl;
     }
     comment.content = dto.content;

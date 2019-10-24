@@ -83,16 +83,16 @@ export class UserService {
     let page = 1;
     qb.where('1 = 1');
 
-    if (query.username) {
+    if ('username' in query) {
       qb.andWhere('user.name LIKE :username', { name: `%${query.username}%` });
     }
-    if (query.nickname) {
+    if ('nickname' in query) {
       qb.andWhere('user.name LIKE :nickname', { name: `%${query.nickname}%` });
     }
-    if (query.limit) {
+    if ('limit' in query) {
       limit = query.limit;
     }
-    if (query.page) {
+    if ('page' in query) {
       page = query.page;
       offset = limit * (page - 1);
     }
@@ -149,17 +149,13 @@ export class UserService {
     if (!toUpdate) {
       throw new BadRequestException(`id为${id}的用户不存在`);
     }
-    if (dto.nickname) {
-      toUpdate.nickname = dto.nickname;
-    }
-    if (dto.password) {
+    toUpdate.nickname = dto.nickname;
+    if ('password' in dto) {
       toUpdate.password = crypto
         .createHmac('sha256', dto.password)
         .digest('hex');
     }
-    if (dto.role) {
-      toUpdate.role = dto.role;
-    }
+    toUpdate.role = dto.role;
     const savedUser = await this.userRepository.save(toUpdate);
     return this.buildUserRO(savedUser);
   }
