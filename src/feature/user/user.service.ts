@@ -2,6 +2,7 @@ import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import { Repository, DeleteResult } from 'typeorm';
+import { ConfigService, InjectConfig } from 'nestjs-config';
 import { BadRequestException } from '@nestjs/common/exceptions';
 
 import { AuthService } from '../../common/auth/auth.service';
@@ -12,6 +13,7 @@ import {
   QueryUserDto,
   LoginUserDto,
   UpdateUserDto,
+  UpdatePasswordDto,
 } from './dto';
 
 @Injectable()
@@ -21,6 +23,8 @@ export class UserService {
     protected readonly userRepository: Repository<UserEntity>,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+    @InjectConfig()
+    private readonly config: ConfigService,
   ) {}
   /**
    * 通过id查询用户
@@ -125,14 +129,13 @@ export class UserService {
 
     const newUser = new UserEntity();
     newUser.username = username;
-    newUser.password = password;
+    newUser.password = this.config.get('service.DEFAULT_PASSWORD');
     newUser.nickname = nickname;
     newUser.role = role;
 
     const savedUser = await this.userRepository.save(newUser);
     return this.buildUserRO(savedUser);
   }
-
   /**
    * 删除
    * @param id
@@ -156,6 +159,31 @@ export class UserService {
         .digest('hex');
     }
     toUpdate.role = dto.role;
+    const savedUser = await this.userRepository.save(toUpdate);
+    return this.buildUserRO(savedUser);
+  }
+  /**
+   * 修改密码
+   * @param dto
+   */
+  async updatePassword(id: number, dto: UpdatePasswordDto): Promise<UserRO> {
+    const findOptions = {
+      id,
+      password: crypto.createHmac('sha256', dto.oldPassword).digest('hex'),
+    };
+    // tslint:disable-next-line: variable-name
+    const toUpdate = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { username: findOptions.id })
+      .andWhere('user.password = :password', {
+        password: findOptions.password,
+      })
+      .getOne();
+
+    if (!toUpdate) {
+      throw new BadRequestException('不存在此用户或原密码错误');
+    }
+    toUpdate.password = dto.newPassword;
     const savedUser = await this.userRepository.save(toUpdate);
     return this.buildUserRO(savedUser);
   }
