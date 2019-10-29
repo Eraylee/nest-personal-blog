@@ -16,6 +16,7 @@ import {
   QueryUserDto,
   LoginUserDto,
   UpdateUserDto,
+  UpdatePasswordDto,
 } from './dto';
 import { UserService } from './user.service';
 import { RolesGuard, AuthGuard } from '../../common/guards';
@@ -85,7 +86,6 @@ export class UserController {
       data: await this.userService.create(user),
     };
   }
-
   /**
    * 删除用户
    * @param id
@@ -102,7 +102,6 @@ export class UserController {
       data: await this.userService.delete(id),
     };
   }
-
   /**
    * 修改用户
    * @param user
@@ -120,6 +119,41 @@ export class UserController {
       code: 200,
       message: '修改成功',
       data: await this.userService.update(id, user),
+    };
+  }
+  /**
+   * 修改用户密码
+   * @param user
+   * @return Promise<Result>
+   */
+  @ApiOperation({ title: '修改密码' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @Put(':id/password')
+  async updatePassword(
+    @Param('id') id: number,
+    @Body() user: UpdatePasswordDto,
+  ): Promise<Result> {
+    return {
+      code: 200,
+      message: '修改成功',
+      data: await this.userService.updatePassword(id, user),
+    };
+  }
+  /**
+   * 重置用户密码
+   * @param user
+   * @return Promise<Result>
+   */
+  @ApiOperation({ title: '重置密码' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @Put(':id/resetPassword')
+  async resetPassword(@Param('id') id: number): Promise<Result> {
+    return {
+      code: 200,
+      message: '修改成功',
+      data: await this.userService.resetPassword(id),
     };
   }
 }

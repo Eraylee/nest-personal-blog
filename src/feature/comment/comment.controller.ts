@@ -41,7 +41,7 @@ export class CommentController {
    * @param id
    */
   @ApiOperation({ title: '通过id查询评论树' })
-  @Get('tree:id')
+  @Get(':id/tree')
   async getCommentTree(@Param('id') id: number): Promise<Result> {
     return {
       code: 200,

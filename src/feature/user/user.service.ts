@@ -153,11 +153,6 @@ export class UserService {
       throw new BadRequestException(`id为${id}的用户不存在`);
     }
     toUpdate.nickname = dto.nickname;
-    if ('password' in dto) {
-      toUpdate.password = crypto
-        .createHmac('sha256', dto.password)
-        .digest('hex');
-    }
     toUpdate.role = dto.role;
     const savedUser = await this.userRepository.save(toUpdate);
     return this.buildUserRO(savedUser);
@@ -184,6 +179,19 @@ export class UserService {
       throw new BadRequestException('不存在此用户或原密码错误');
     }
     toUpdate.password = dto.newPassword;
+    const savedUser = await this.userRepository.save(toUpdate);
+    return this.buildUserRO(savedUser);
+  }
+  /**
+   * 重置密码
+   * @param dto
+   */
+  async resetPassword(id: number): Promise<UserRO> {
+    const toUpdate: UserEntity = await this.userRepository.findOne(id);
+    if (!toUpdate) {
+      throw new BadRequestException(`id为${id}的用户不存在`);
+    }
+    toUpdate.password = this.config.get('service.DEFAULT_PASSWORD');
     const savedUser = await this.userRepository.save(toUpdate);
     return this.buildUserRO(savedUser);
   }
