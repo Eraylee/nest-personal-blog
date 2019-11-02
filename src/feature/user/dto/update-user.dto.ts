@@ -8,7 +8,6 @@ export class UpdateUserDto {
   readonly nickname: string;
 
   @ApiModelProperty({ description: '角色', enum: ['regular', 'admin'] })
-  @IsDefined()
   @IsIn(['regular', 'admin'])
   readonly role: string;
 }

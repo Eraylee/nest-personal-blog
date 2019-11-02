@@ -153,7 +153,9 @@ export class UserService {
       throw new BadRequestException(`id为${id}的用户不存在`);
     }
     toUpdate.nickname = dto.nickname;
-    toUpdate.role = dto.role;
+    if ('role' in dto) {
+      toUpdate.role = dto.role;
+    }
     const savedUser = await this.userRepository.save(toUpdate);
     return this.buildUserRO(savedUser);
   }
