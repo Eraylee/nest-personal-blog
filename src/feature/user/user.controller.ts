@@ -127,8 +127,7 @@ export class UserController {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '修改密码' })
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
+  @UseGuards(AuthGuard)
   @Put(':id/password')
   async updatePassword(
     @Param('id') id: number,

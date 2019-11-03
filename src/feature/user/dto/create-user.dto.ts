@@ -24,8 +24,8 @@ export class CreateUserDto {
 
   @ApiModelProperty({ description: '用户密码' })
   @IsDefined()
-  @IsByteLength(6, 18, {
-    message: '密码长度不是6-18位',
+  @Matches(/^[a-zA-Z0-9\-_]\w{5,19}$/, {
+    message: '密码不合法',
   })
   readonly password: string;
 
