@@ -1,9 +1,12 @@
-import { IsNotEmpty, IsDefined } from 'class-validator';
+import { Allow } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class UpdateTagDto {
-  @ApiModelProperty({ description: '标签名' })
-  @IsDefined()
-  @IsNotEmpty()
+  @ApiModelProperty({ required: false, description: '标签名' })
+  @Allow()
   readonly name: string;
+
+  @ApiModelProperty({ required: false, description: '标签颜色' })
+  @Allow()
+  readonly color: string;
 }

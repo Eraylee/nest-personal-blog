@@ -7,6 +7,10 @@ export class QueryCategoryDto extends QueryDto {
   @Allow()
   readonly name?: string;
 
+  @ApiModelProperty({ required: false, description: '分类标识' })
+  @Allow()
+  readonly code?: boolean;
+
   @ApiModelProperty({ required: false, description: '启用状态' })
   @Allow()
   readonly enabled?: boolean;

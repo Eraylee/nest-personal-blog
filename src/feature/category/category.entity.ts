@@ -6,6 +6,7 @@ import {
   TreeParent,
   TreeChildren,
   OneToMany,
+  Unique,
 } from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
 
@@ -17,6 +18,11 @@ export class CategoryEntity {
 
   @Column()
   name: string;
+
+  @Column({
+    unique: true,
+  })
+  code: string;
 
   @Column()
   enabled: boolean;

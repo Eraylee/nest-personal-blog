@@ -9,21 +9,28 @@ import { CategoryEntity } from './category.entity';
 export class CategoryService {
   constructor(
     @InjectRepository(CategoryEntity)
-    private readonly categoryEntity: TreeRepository<CategoryEntity>,
+    private readonly categoryRepository: TreeRepository<CategoryEntity>,
   ) {}
   /**
    * 通过id查询分类
    * @param id
    */
   async findById(id: number): Promise<any> {
-    return await this.categoryEntity.findOne(id);
+    const category = await this.categoryRepository.findOne(id);
+    const ancestorsTree = await this.categoryRepository.findAncestorsTree(
+      category,
+    );
+    if (ancestorsTree.parent) {
+      Object.assign(ancestorsTree, { parent: ancestorsTree.parent.code });
+    }
+    return ancestorsTree;
   }
   /**
    * 查询分类树
    * @param query
    */
   async findTree(): Promise<CategoryEntity[]> {
-    return await this.categoryEntity.findTrees();
+    return await this.categoryRepository.findTrees();
   }
   /**
    * 新增分类
@@ -33,49 +40,58 @@ export class CategoryService {
     const category = new CategoryEntity();
 
     category.name = dto.name;
+    category.code = dto.code;
     category.enabled = dto.enabled;
-    if ('parentId' in dto) {
-      const parent = await this.categoryEntity.findOne(dto.parentId);
+
+    if (dto.parent) {
+      const parent = await this.categoryRepository.findOne({
+        code: dto.parent,
+      });
       if (!parent) {
-        throw new BadRequestException(`id为${dto.parentId}的分类不存在`);
+        throw new BadRequestException(`code为${dto.parent}的分类不存在`);
       }
       category.parent = parent;
     }
-    return await this.categoryEntity.save(category);
+    return await this.categoryRepository.save(category);
   }
   /**
    * 修改分类
    * @param dto
    */
   async update(id: number, dto: UpdateCategoryDto): Promise<CategoryEntity> {
-    const category = await this.categoryEntity.findOne(id);
+    const category = await this.categoryRepository.findOne(id);
     if (!category) {
       throw new BadRequestException(`id为${id}的分类不存在`);
     }
     if ('name' in dto) {
       category.name = dto.name;
     }
+    if ('code' in dto) {
+      category.code = dto.code;
+    }
     if ('enabled' in dto) {
       category.enabled = dto.enabled;
     }
-    if ('parentId' in dto) {
-      const parent = await this.categoryEntity.findOne(dto.parentId);
+    if (dto.parent) {
+      const parent = await this.categoryRepository.findOne({
+        code: dto.parent,
+      });
       if (!parent) {
-        throw new BadRequestException(`id为${dto.parentId}的分类不存在`);
+        throw new BadRequestException(`code为${dto.parent}的分类不存在`);
       }
       category.parent = parent;
     }
-    return this.categoryEntity.save(category);
+    return this.categoryRepository.save(category);
   }
   /**
    * 删除分类
    * @param user
    */
   async delete(id: number): Promise<DeleteResult> {
-    const category = await this.categoryEntity.findOne(id);
+    const category = await this.categoryRepository.findOne(id);
     if (!category) {
       throw new BadRequestException(`id为${id}的分类不存在`);
     }
-    return await this.categoryEntity.delete(id);
+    return await this.categoryRepository.delete(id);
   }
 }

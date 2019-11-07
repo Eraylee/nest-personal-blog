@@ -9,6 +9,9 @@ export class TagEntity {
   @Column()
   name: string;
 
+  @Column()
+  color: string;
+
   @ManyToMany(type => ArticleEntity, article => article.tags)
   articles: ArticleEntity[];
 }

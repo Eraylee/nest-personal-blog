@@ -7,12 +7,17 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   readonly name: string;
 
+  @ApiModelProperty({ description: '分类标识' })
+  @IsDefined()
+  @IsNotEmpty()
+  readonly code: string;
+
   @ApiModelProperty({ description: '是否启用' })
   @IsDefined()
   @IsBoolean()
   readonly enabled: boolean;
 
-  @ApiModelProperty({ required: false, description: '父级分类id' })
+  @ApiModelProperty({ required: false, description: '父级分类' })
   @Allow()
-  readonly parentId?: number;
+  readonly parent?: string;
 }

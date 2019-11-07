@@ -6,4 +6,9 @@ export class CreateTagDto {
   @IsDefined()
   @IsNotEmpty()
   readonly name: string;
+
+  @ApiModelProperty({ description: '标签颜色' })
+  @IsDefined()
+  @IsNotEmpty()
+  readonly color: string;
 }
