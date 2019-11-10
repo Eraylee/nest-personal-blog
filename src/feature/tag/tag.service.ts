@@ -54,7 +54,8 @@ export class TagService {
     qb.limit(limit)
       .offset(offset)
       .select('tab.id')
-      .addSelect('tab.name');
+      .addSelect('tab.name')
+      .addSelect('tab.color');
     const data = await qb.getMany();
     return { data, total, page };
   }
