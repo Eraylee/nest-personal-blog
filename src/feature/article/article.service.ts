@@ -71,13 +71,13 @@ export class ArticleService {
 
     article.title = dto.title;
     article.description = dto.description;
-    if (dto.isTop) {
+    if ('isTop' in dto) {
       article.isTop = dto.isTop;
     }
-    if (dto.isDraft) {
+    if ('isDraft' in dto) {
       article.isDraft = dto.isDraft;
     }
-    if (dto.allowComment) {
+    if ('allowComment' in dto) {
       article.allowComment = dto.allowComment;
     }
     article.content = dto.content;
@@ -86,25 +86,19 @@ export class ArticleService {
       article.cover = dto.cover;
     }
     const attr = [];
-    for (const name of dto.tags) {
-      const record = await this.tagRepository.findOne({
-        where: [name],
-      });
-      if (!record) {
-        const tag = new TagEntity();
-        tag.name = name;
-        const rest: any = await this.tagRepository.save(
-          this.tagRepository.create(tag),
-        );
-        attr.push(rest);
-      } else {
-        attr.push(await record);
+    for (const item of dto.tags) {
+      const tag = await this.tagRepository.findOne(item);
+      if (!tag) {
+        throw new BadRequestException(`id为${item}的标签不存在`);
       }
+      attr.push(tag);
     }
     article.tags = attr;
-    const category = await this.categoryRepository.findOne(dto.categoryId);
+    const category = await this.categoryRepository.findOne({
+      code: dto.category,
+    });
     if (!category) {
-      throw new BadRequestException(`id为${dto.categoryId}的分类不存在`);
+      throw new BadRequestException(`code为${dto.category}的分类不存在`);
     }
     article.category = category;
     return await this.articleRepository.save(article);
@@ -127,30 +121,27 @@ export class ArticleService {
     if (dto.cover) {
       article.cover = dto.cover;
     }
-
-    const attr = [];
-    for (const name of dto.tags) {
-      const record = await this.tagRepository.findOne({
-        where: [name],
+    // 如果有标签
+    if (dto.tags) {
+      const attr = [];
+      for (const item of dto.tags) {
+        const tag = await this.tagRepository.findOne(item);
+        if (!tag) {
+          throw new BadRequestException(`id为${item}的标签不存在`);
+        }
+        attr.push(tag);
+      }
+      article.tags = attr;
+    }
+    // 如果有分类
+    if (dto.category) {
+      const category = await this.categoryRepository.findOne({
+        code: dto.category,
       });
-      if (!record) {
-        const tag = new TagEntity();
-        tag.name = name;
-        const rest: any = await this.tagRepository.save(
-          this.tagRepository.create(tag),
-        );
-        attr.push(rest);
-      } else {
-        attr.push(await record);
+      if (!category) {
+        throw new BadRequestException(`code为${dto.category}的分类不存在`);
       }
     }
-    article.tags = attr;
-
-    const category = await this.categoryRepository.findOne(dto.categoryId);
-    if (!category) {
-      throw new BadRequestException(`id为${dto.categoryId}的分类不存在`);
-    }
-    article.category = category;
 
     return await this.articleRepository.save(article);
   }

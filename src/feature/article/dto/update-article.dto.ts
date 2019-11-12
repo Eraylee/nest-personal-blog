@@ -41,13 +41,12 @@ export class UpdateArticleDto {
   @Allow()
   readonly cover: string;
 
-  @ApiModelProperty({ description: '文章分类id' })
-  @IsDefined()
-  @IsNotEmpty()
-  readonly categoryId: number;
+  @ApiModelProperty({ required: false, description: '文章分类编号' })
+  @Allow()
+  readonly category: string;
 
-  @ApiModelProperty({ description: '文章标签' })
+  @ApiModelProperty({ description: '文章标签id集合' })
   @IsDefined()
   @IsNotEmpty()
-  readonly tags: string[];
+  readonly tags: number[];
 }
