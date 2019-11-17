@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import * as path from 'path';
 import { AppController } from './app.controller';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as path from 'path';
+import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from 'nestjs-config';
 
 import { FeatureModule } from './feature/feature.module';

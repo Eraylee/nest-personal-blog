@@ -1,4 +1,4 @@
-import { Query } from '../../../../gql-nestjs-eraylee-blog-server/src/common/interfaces';
+import { Query } from '../../common/interfaces';
 import { ArticleEntity } from './article.entity';
 
 export interface ArticlesRO extends Query {

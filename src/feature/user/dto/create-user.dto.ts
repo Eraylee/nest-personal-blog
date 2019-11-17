@@ -7,8 +7,9 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiModelProperty } from '@nestjs/swagger';
+import { UserEntity } from '../user.entity';
 
-export class CreateUserDto {
+export class CreateUserDto implements Partial<UserEntity> {
   @ApiModelProperty({ description: '用户名' })
   @IsDefined()
   @Transform(value => value.toLowerCase(), { toClassOnly: true })

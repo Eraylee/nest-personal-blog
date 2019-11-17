@@ -4,21 +4,24 @@ import { TagModule } from './tag/tag.module';
 import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { CommentModule } from './comment/comment.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
-    UserModule,
     TagModule,
+    UserModule,
+    FileModule,
     ArticleModule,
-    CategoryModule,
     CommentModule,
+    CategoryModule,
   ],
   exports: [
-    UserModule,
     TagModule,
+    UserModule,
+    FileModule,
     ArticleModule,
-    CategoryModule,
     CommentModule,
+    CategoryModule,
   ],
 })
 export class FeatureModule {}
