@@ -2,11 +2,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  JoinColumn,
-  ManyToOne,
-  Tree,
-  TreeParent,
-  TreeChildren,
+  Generated,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -15,21 +11,31 @@ import { ArticleEntity } from '../article/article.entity';
 @Entity('file')
 export class FileEntity {
   @PrimaryGeneratedColumn()
-  public readonly id: number;
+  public id: number;
 
   @Column()
-  public readonly path: string;
+  public path: string;
+
+  @Column()
+  public originalName: string;
+
+  @Column()
+  public fileName: string;
 
   @Column({
     type: 'int',
   })
-  public readonly size: string;
+  public size: number;
 
   @Column()
-  public readonly name: string;
+  public fieldName: string;
 
   @Column()
-  public readonly type: string;
+  public mimeType: string;
+
+  @Column()
+  @Generated('uuid')
+  public fid: string;
 
   @CreateDateColumn()
   createdAt: Date;

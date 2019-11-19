@@ -13,7 +13,7 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { Result } from '../../common/interfaces';
+import { PlainBody } from '../../common/decorators';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
@@ -39,15 +39,31 @@ export class FileController {
       data: await this.fileService.find(query),
     };
   }
-
+  /**
+   * 上传文件
+   * @param files
+   * @param path
+   */
   @ApiOperation({ title: '上传文件' })
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() files: CreateFileDto) {
+  async uploadFile(
+    @UploadedFile() files: CreateFileDto,
+    @Body('path') path: string,
+  ) {
+    return await this.fileService.upload(files, path);
+  }
+  /**
+   * 删除文件
+   * @param fid
+   */
+  @ApiOperation({ title: '删除文件' })
+  @Delete()
+  async deleteFile(@PlainBody() fid: string) {
+    await this.fileService.remove(fid);
     return {
       code: 200,
-      message: '上传成功',
-      data: await this.fileService.upload(files),
+      message: '删除成功',
     };
   }
 }

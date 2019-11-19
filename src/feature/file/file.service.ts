@@ -1,20 +1,18 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createWriteStream } from 'fs';
+import { createWriteStream, existsSync, mkdirSync, unlinkSync } from 'fs';
 import { join } from 'path';
-import { Repository, DeleteResult } from 'typeorm';
-import { ConfigService, InjectConfig } from 'nestjs-config';
+import { Repository } from 'typeorm';
 import { FileEntity } from './file.entity';
 import { QueryFileDto, CreateFileDto } from './dto';
 
+const BASE_PATH = '../../../public';
 @Injectable()
 export class FileService {
   constructor(
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
-
-    @InjectConfig()
-    private readonly config: ConfigService,
   ) {}
   /**
    * 查询
@@ -43,15 +41,59 @@ export class FileService {
     const data = await qb.getMany();
     return { data, total, page };
   }
-  async upload(file: CreateFileDto) {
-    const filePath = join(
-      __dirname,
-      '../../',
-      'upload',
-      `${file.originalname}`,
-    );
-    const writeImage = createWriteStream(filePath);
+  async upload(dto: CreateFileDto, path: string) {
+    try {
+      const filePath = join(__dirname, BASE_PATH, 'file', path);
+      this.checkDir(filePath);
 
-    writeImage.write(file.buffer);
+      const fileName = `${Date.parse(new Date().toString())}.${
+        dto.originalname.split('.')[1]
+      }`;
+      const writeFilePath = join(filePath, `${fileName}`);
+      const writeFile = createWriteStream(writeFilePath);
+
+      const file = new FileEntity();
+      file.size = dto.size;
+      file.mimeType = dto.mimetype;
+      file.fieldName = dto.fieldname;
+      file.originalName = dto.originalname;
+      file.fileName = fileName;
+      file.path = `/file/${path}/${fileName}`;
+
+      const res = await this.fileRepository.save(file);
+
+      await writeFile.write(dto.buffer);
+      return res.fid;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async remove(fid: string) {
+    const file = await this.fileRepository.findOne({ fid });
+    if (!file) {
+      throw new BadRequestException(`删除fid为${fid}的文件不存在`);
+    }
+    const path = join(__dirname, BASE_PATH, file.path);
+    this.deleteFile(path);
+    await this.fileRepository.remove(file);
+  }
+  /**
+   * 检查是否有文件夹，没有就新建文件夹
+   * @param path
+   */
+  checkDir(path) {
+    if (!existsSync(path)) {
+      mkdirSync(path);
+    }
+  }
+  /**
+   * 删除服务器文件
+   * @param path
+   */
+  deleteFile(path: string) {
+    if (!existsSync(path)) {
+      throw new BadRequestException(`文件或者文件路径不存在`);
+    }
+    unlinkSync(path);
   }
 }
