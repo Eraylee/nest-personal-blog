@@ -87,6 +87,19 @@ export class FileService {
     await this.fileRepository.remove(file);
   }
   /**
+   *
+   * @param fileName 通过文件名删除文件
+   */
+  public async removeByFileName(fileName: string) {
+    const file = await this.fileRepository.findOne({ fileName });
+    if (!file) {
+      throw new BadRequestException(`删除fileName为${fileName}的文件不存在`);
+    }
+    const path = join(__dirname, BASE_PATH, file.path, file.fileName);
+    this.deleteFile(path);
+    await this.fileRepository.remove(file);
+  }
+  /**
    * 检查是否有文件夹，没有就新建文件夹
    * @param path
    */

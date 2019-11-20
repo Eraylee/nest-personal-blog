@@ -66,4 +66,17 @@ export class FileController {
       message: '删除成功',
     };
   }
+  /**
+   * 通过文件名删除文件
+   * @param fileName
+   */
+  @ApiOperation({ title: '删除文件' })
+  @Delete('/fileName')
+  async deleteFileByPath(@Query('fileName') fileName: string) {
+    await this.fileService.removeByFileName(fileName);
+    return {
+      code: 200,
+      message: '删除成功',
+    };
+  }
 }
