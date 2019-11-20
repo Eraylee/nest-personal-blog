@@ -18,7 +18,7 @@ export class FileService {
    * 查询
    * @param query
    */
-  async find(query: QueryFileDto) {
+  public async find(query: QueryFileDto) {
     const qb = await this.fileRepository.createQueryBuilder('file');
     let offset = 0;
     let limit = 10;
@@ -41,7 +41,12 @@ export class FileService {
     const data = await qb.getMany();
     return { data, total, page };
   }
-  async upload(dto: CreateFileDto, path: string) {
+  /**
+   * 上传
+   * @param dto
+   * @param path
+   */
+  public async upload(dto: CreateFileDto, path: string) {
     try {
       const filePath = join(__dirname, BASE_PATH, 'file', path);
       this.checkDir(filePath);
@@ -55,10 +60,10 @@ export class FileService {
       const file = new FileEntity();
       file.size = dto.size;
       file.mimeType = dto.mimetype;
-      file.fieldName = dto.fieldname;
+      file.fieldName = path;
       file.originalName = dto.originalname;
       file.fileName = fileName;
-      file.path = `/file/${path}/${fileName}`;
+      file.path = `/file/${path}/`;
 
       const res = await this.fileRepository.save(file);
 
@@ -68,12 +73,16 @@ export class FileService {
       throw error;
     }
   }
-  async remove(fid: string) {
+  /**
+   * 删除
+   * @param fid
+   */
+  public async remove(fid: string) {
     const file = await this.fileRepository.findOne({ fid });
     if (!file) {
       throw new BadRequestException(`删除fid为${fid}的文件不存在`);
     }
-    const path = join(__dirname, BASE_PATH, file.path);
+    const path = join(__dirname, BASE_PATH, file.path, file.fileName);
     this.deleteFile(path);
     await this.fileRepository.remove(file);
   }
@@ -81,7 +90,7 @@ export class FileService {
    * 检查是否有文件夹，没有就新建文件夹
    * @param path
    */
-  checkDir(path) {
+  public checkDir(path) {
     if (!existsSync(path)) {
       mkdirSync(path);
     }
@@ -90,7 +99,7 @@ export class FileService {
    * 删除服务器文件
    * @param path
    */
-  deleteFile(path: string) {
+  public deleteFile(path: string) {
     if (!existsSync(path)) {
       throw new BadRequestException(`文件或者文件路径不存在`);
     }
