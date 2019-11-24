@@ -2,16 +2,12 @@ import {
   Get,
   Post,
   Body,
-  Put,
   Delete,
-  Param,
   Controller,
   Query,
-  UseGuards,
-  Req,
-  Request,
   UseInterceptors,
   UploadedFile,
+  Param,
 } from '@nestjs/common';
 import { PlainBody } from '../../common/decorators';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
@@ -25,6 +21,20 @@ import { FileService } from './file.service';
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
+  /**
+   * 查询文件
+   * @param fid
+   * @return Promise<Result>
+   */
+  @ApiOperation({ title: '通过fid查询文件' })
+  @Get(':fid')
+  async getFile(@Param('fid') fid: string) {
+    return {
+      code: 200,
+      message: '查询成功',
+      data: await this.fileService.findByFid(fid),
+    };
+  }
   /**
    * 查询文件
    * @param query
@@ -61,19 +71,6 @@ export class FileController {
   @Delete()
   async deleteFile(@PlainBody() fid: string) {
     await this.fileService.remove(fid);
-    return {
-      code: 200,
-      message: '删除成功',
-    };
-  }
-  /**
-   * 通过文件名删除文件
-   * @param fileName
-   */
-  @ApiOperation({ title: '删除文件' })
-  @Delete('/fileName')
-  async deleteFileByPath(@Query('fileName') fileName: string) {
-    await this.fileService.removeByFileName(fileName);
     return {
       code: 200,
       message: '删除成功',

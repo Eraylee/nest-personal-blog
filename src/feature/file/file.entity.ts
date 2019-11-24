@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ArticleEntity } from '../article/article.entity';
 
 @Entity('file')
 export class FileEntity {

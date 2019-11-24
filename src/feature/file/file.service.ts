@@ -15,6 +15,13 @@ export class FileService {
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
   /**
+   * 通过文件id查询文件
+   * @param fid
+   */
+  public async findByFid(fid: string) {
+    return await this.fileRepository.findOne({ fid });
+  }
+  /**
    * 查询
    * @param query
    */
@@ -81,19 +88,6 @@ export class FileService {
     const file = await this.fileRepository.findOne({ fid });
     if (!file) {
       throw new BadRequestException(`删除fid为${fid}的文件不存在`);
-    }
-    const path = join(__dirname, BASE_PATH, file.path, file.fileName);
-    this.deleteFile(path);
-    await this.fileRepository.remove(file);
-  }
-  /**
-   *
-   * @param fileName 通过文件名删除文件
-   */
-  public async removeByFileName(fileName: string) {
-    const file = await this.fileRepository.findOne({ fileName });
-    if (!file) {
-      throw new BadRequestException(`删除fileName为${fileName}的文件不存在`);
     }
     const path = join(__dirname, BASE_PATH, file.path, file.fileName);
     this.deleteFile(path);
