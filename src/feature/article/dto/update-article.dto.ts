@@ -7,7 +7,9 @@ import {
 } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 
-export class UpdateArticleDto {
+import { CreateArticleDto } from './create-article.dto';
+
+export class UpdateArticleDto implements Partial<CreateArticleDto> {
   @ApiModelProperty({ description: '文章标题' })
   @IsDefined()
   @IsNotEmpty()
@@ -25,9 +27,13 @@ export class UpdateArticleDto {
   @IsBoolean()
   readonly isTop: boolean;
 
-  @ApiModelProperty({ required: false, description: '内容' })
+  @ApiModelProperty({ required: false, description: 'html内容' })
   @Allow()
-  readonly content: string;
+  readonly html: string;
+
+  @ApiModelProperty({ required: false, description: 'markdown内容' })
+  @Allow()
+  readonly markdown: string;
 
   @ApiModelProperty({ required: false, description: '是否允许评论' })
   @IsBoolean()

@@ -24,10 +24,15 @@ export class CreateArticleDto {
   @IsBoolean()
   readonly isTop?: boolean;
 
-  @ApiModelProperty({ required: false, description: '内容' })
+  @ApiModelProperty({ required: false, description: 'html内容' })
   @IsDefined()
   @IsNotEmpty()
-  readonly content: string;
+  readonly html: string;
+
+  @ApiModelProperty({ required: false, description: 'markdown内容' })
+  @IsDefined()
+  @IsNotEmpty()
+  readonly markdown: string;
 
   @ApiModelProperty({ required: false, description: '是否允许评论' })
   @IsBoolean()

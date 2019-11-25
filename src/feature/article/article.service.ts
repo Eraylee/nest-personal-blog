@@ -80,7 +80,8 @@ export class ArticleService {
     if ('allowComment' in dto) {
       article.allowComment = dto.allowComment;
     }
-    article.content = dto.content;
+    article.markdown = dto.markdown;
+    article.html = dto.html;
     article.user = await this.userRepository.findOne(user.id);
     if (dto.cover) {
       article.cover = dto.cover;
@@ -117,7 +118,8 @@ export class ArticleService {
     article.isTop = dto.isTop;
     article.isDraft = dto.isDraft;
     article.allowComment = dto.allowComment;
-    article.content = dto.content;
+    article.html = dto.html;
+    article.markdown = dto.markdown;
     if (dto.cover) {
       article.cover = dto.cover;
     }

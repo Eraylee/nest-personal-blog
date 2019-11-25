@@ -31,13 +31,16 @@ export class ArticleEntity {
   isTop: boolean;
 
   @Column('text')
-  content: string;
+  markdown: string;
 
   @Column({
     type: 'boolean',
     default: true,
   })
   allowComment: boolean;
+
+  @Column('text')
+  html: string;
 
   @Column({
     type: 'boolean',
@@ -51,7 +54,9 @@ export class ArticleEntity {
   })
   isDraft: boolean;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   cover: string;
 
   @Column({
@@ -66,9 +71,10 @@ export class ArticleEntity {
   })
   viewsNum: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
+  @Column({
+    type: 'int',
+    default: 0,
+  })
   @UpdateDateColumn()
   updatedAt: Date;
 
