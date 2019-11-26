@@ -30,7 +30,13 @@ export class ArticleService {
    * @param id
    */
   async findById(id: number): Promise<ArticleEntity> {
-    return await this.articleRepository.findOne(id);
+    return await this.articleRepository
+      .createQueryBuilder('article')
+      .where('article.id = :id', { id })
+      .leftJoinAndSelect('article.tags', 'tag')
+      .leftJoinAndSelect('article.category', 'category')
+      .leftJoinAndSelect('article.user', 'user')
+      .getOne();
   }
   /**
    * 查询
@@ -58,12 +64,14 @@ export class ArticleService {
 
     qb.limit(limit)
       .offset(offset)
+      .leftJoinAndSelect('article.tags', 'tag')
       .getMany();
     const data = await qb.getMany();
     return { data, total, page };
   }
   /**
    * 新增文章
+   * @param dto
    * @param user
    */
   async create(dto: CreateArticleDto, user: UserRO): Promise<ArticleEntity> {
@@ -106,6 +114,7 @@ export class ArticleService {
   }
   /**
    * 修改文章
+   * @param id
    * @param dto
    */
   async update(id: number, dto: UpdateArticleDto) {
@@ -149,9 +158,9 @@ export class ArticleService {
   }
   /**
    * 删除文章
-   * @param user
+   * @param id
    */
-  async delete(id: number): Promise<DeleteResult> {
+  async remove(id: number): Promise<DeleteResult> {
     const article = await this.articleRepository.findOne(id);
     if (!article) {
       throw new BadRequestException(`删除失败id为${id}的文章不存在`);

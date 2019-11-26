@@ -84,7 +84,7 @@ export class ArticleController {
     return {
       code: 200,
       message: '删除成功',
-      data: await this.articleService.delete(id),
+      data: await this.articleService.remove(id),
     };
   }
 
