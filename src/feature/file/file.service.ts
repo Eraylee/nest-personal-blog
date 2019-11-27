@@ -84,7 +84,7 @@ export class FileService {
    * 删除
    * @param fid
    */
-  public async remove(fid: string) {
+  public async removeByFid(fid: string) {
     const file = await this.fileRepository.findOne({ fid });
     if (!file) {
       throw new BadRequestException(`删除fid为${fid}的文件不存在`);
@@ -92,6 +92,25 @@ export class FileService {
     const path = join(__dirname, BASE_PATH, file.path, file.fileName);
     this.deleteFile(path);
     await this.fileRepository.remove(file);
+  }
+  /**
+   * 删除
+   * @param fid
+   */
+  public async remove(ids: number[]) {
+    try {
+      for (const id of ids) {
+        const file = await this.fileRepository.findOne(id);
+        if (!file) {
+          throw new BadRequestException(`id${id}的文件不存在`);
+        }
+        const path = join(__dirname, BASE_PATH, file.path, file.fileName);
+        this.deleteFile(path);
+        await this.fileRepository.remove(file);
+      }
+    } catch (error) {
+      throw error;
+    }
   }
   /**
    * 检查是否有文件夹，没有就新建文件夹

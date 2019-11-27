@@ -94,12 +94,12 @@ export class CommentController {
   @ApiOperation({ title: '删除评论' })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
-  @Delete(':id')
-  async deleteComment(@Param('id') id: number) {
+  @Delete()
+  async deleteComment(@Body('ids') ids: number[]) {
     return {
       code: 200,
       message: '删除成功',
-      data: await this.commentService.delete(id),
+      data: await this.commentService.remove(ids),
     };
   }
 }

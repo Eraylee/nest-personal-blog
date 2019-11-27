@@ -64,13 +64,26 @@ export class FileController {
     return await this.fileService.upload(files, path);
   }
   /**
-   * 删除文件
+   * 根据fid 删除文件
    * @param fid
+   */
+  @ApiOperation({ title: '通过fid删除文件' })
+  @Delete('/byFid')
+  async deleteFileByFid(@PlainBody() fid: string) {
+    await this.fileService.removeByFid(fid);
+    return {
+      code: 200,
+      message: '删除成功',
+    };
+  }
+  /**
+   * 批量删除文件
+   * @param ids
    */
   @ApiOperation({ title: '删除文件' })
   @Delete()
-  async deleteFile(@PlainBody() fid: string) {
-    await this.fileService.remove(fid);
+  async deleteFiles(@Body('ids') ids: number[]) {
+    await this.fileService.remove(ids);
     return {
       code: 200,
       message: '删除成功',

@@ -73,13 +73,9 @@ export class TagService {
   }
   /**
    * 删除标签
-   * @param user
+   * @param ids
    */
-  async delete(id: number): Promise<DeleteResult> {
-    const tag = await this.tagEntity.findOne(id);
-    if (!tag) {
-      throw new BadRequestException(`id为${id}的标签不存在`);
-    }
-    return await this.tagEntity.delete(id);
+  async remove(ids: number[]): Promise<DeleteResult> {
+    return await this.tagEntity.delete(ids);
   }
 }

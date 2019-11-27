@@ -74,20 +74,19 @@ export class ArticleController {
   }
   /**
    * 删除文章
-   * @param id
+   * @param ids
    */
   @ApiOperation({ title: '删除文章' })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
-  @Delete(':id')
-  async deleteArticle(@Param('id') id: number) {
+  @Delete()
+  async deleteArticles(@Body('ids') ids: number[]) {
     return {
       code: 200,
       message: '删除成功',
-      data: await this.articleService.remove(id),
+      data: await this.articleService.remove(ids),
     };
   }
-
   /**
    * 修改文章
    * @param id

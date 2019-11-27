@@ -70,18 +70,18 @@ export class TagController {
   }
   /**
    * 删标签
-   * @param id
+   * @param ids
    * @return Promise<Result>
    */
   @ApiOperation({ title: '删除标签' })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
-  @Delete(':id')
-  async deleteTag(@Param('id') id: number) {
+  @Delete()
+  async deleteTag(@Body('ids') ids: number[]) {
     return {
       code: 200,
       message: '删除成功',
-      data: await this.tagService.delete(id),
+      data: await this.tagService.remove(ids),
     };
   }
 

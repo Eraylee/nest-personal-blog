@@ -88,13 +88,9 @@ export class CommentService {
   }
   /**
    * 删除评论
-   * @param id
+   * @param ids
    */
-  async delete(id: number): Promise<DeleteResult> {
-    const comment = await this.commentRepository.findOne(id);
-    if (!comment) {
-      throw new BadRequestException(`id为${id}的评论不存在`);
-    }
-    return await this.commentRepository.delete(id);
+  async remove(ids: number[]): Promise<DeleteResult> {
+    return await this.commentRepository.delete(ids);
   }
 }

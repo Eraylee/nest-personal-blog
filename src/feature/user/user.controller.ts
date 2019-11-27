@@ -88,18 +88,18 @@ export class UserController {
   }
   /**
    * 删除用户
-   * @param id
+   * @param ids
    * @return Promise<Result>
    */
   @ApiOperation({ title: '删除用户' })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
-  @Delete(':id')
-  async deleteUser(@Param('id') id: number): Promise<Result> {
+  @Delete()
+  async deleteUser(@Body('ids') ids: number[]): Promise<Result> {
     return {
       code: 200,
       message: '删除成功',
-      data: await this.userService.delete(id),
+      data: await this.userService.remove(ids),
     };
   }
   /**

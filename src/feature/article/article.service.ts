@@ -158,14 +158,10 @@ export class ArticleService {
   }
   /**
    * 删除文章
-   * @param id
+   * @param ids
    */
-  async remove(id: number): Promise<DeleteResult> {
-    const article = await this.articleRepository.findOne(id);
-    if (!article) {
-      throw new BadRequestException(`删除失败id为${id}的文章不存在`);
-    }
-    return await this.articleRepository.delete(id);
+  async remove(ids: number[]): Promise<DeleteResult> {
+    return await this.articleRepository.delete(ids);
   }
   /**
    * 软删除

@@ -138,10 +138,10 @@ export class UserService {
   }
   /**
    * 删除
-   * @param id
+   * @param ids
    */
-  async delete(id: number): Promise<DeleteResult> {
-    return await this.userRepository.delete({ id });
+  async remove(ids: number[]): Promise<DeleteResult> {
+    return await this.userRepository.delete(ids);
   }
   /**
    * 修改用户
