@@ -65,6 +65,7 @@ export class ArticleService {
     qb.limit(limit)
       .offset(offset)
       .leftJoinAndSelect('article.tags', 'tag')
+      .leftJoinAndSelect('article.category', 'category')
       .getMany();
     const data = await qb.getMany();
     return { data, total, page };
