@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-09-29 22:00:48
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2019-12-19 18:22:29
+ */
 import {
   IsNotEmpty,
   Allow,
@@ -47,9 +53,9 @@ export class UpdateArticleDto implements Partial<CreateArticleDto> {
   @Allow()
   readonly cover: string;
 
-  @ApiModelProperty({ required: false, description: '文章分类编号' })
+  @ApiModelProperty({ required: false, description: '文章分类id' })
   @Allow()
-  readonly category: string;
+  readonly categoryId: number;
 
   @ApiModelProperty({ description: '文章标签id集合' })
   @IsDefined()

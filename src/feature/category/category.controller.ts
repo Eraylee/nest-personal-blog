@@ -46,7 +46,7 @@ export class CategoryController {
     return {
       code: 200,
       message: '查询成功',
-      data: await this.categoryService.findTree(),
+      data: await this.categoryService.findAll(),
     };
   }
   /**

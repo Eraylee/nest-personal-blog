@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-09-29 22:00:48
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2019-12-19 18:22:11
+ */
 import {
   IsNotEmpty,
   IsDefined,
@@ -46,10 +52,10 @@ export class CreateArticleDto {
   @Allow()
   readonly cover?: string;
 
-  @ApiModelProperty({ description: '文章分类编号' })
+  @ApiModelProperty({ description: '文章分类id' })
   @IsDefined()
   @IsNotEmpty()
-  readonly category: string;
+  readonly categoryId: number;
 
   @ApiModelProperty({ description: '文章标签id集合' })
   @IsDefined()

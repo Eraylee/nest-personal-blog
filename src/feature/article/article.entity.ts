@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-09-29 22:00:48
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2019-12-17 09:27:32
+ */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -71,10 +77,9 @@ export class ArticleEntity {
   })
   viewsNum: number;
 
-  @Column({
-    type: 'int',
-    default: 0,
-  })
+  @CreateDateColumn()
+  createdAt: Date;
+
   @UpdateDateColumn()
   updatedAt: Date;
 

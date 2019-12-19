@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, TreeRepository, DeleteResult } from 'typeorm';
-import { BadRequestException } from '@nestjs/common/exceptions';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common/exceptions';
 
 import { ArticlesRO } from './article.interface';
 import { TagEntity } from '../tag/tag.entity';
@@ -30,13 +33,17 @@ export class ArticleService {
    * @param id
    */
   async findById(id: number): Promise<ArticleEntity> {
-    return await this.articleRepository
+    const article = await this.articleRepository
       .createQueryBuilder('article')
       .where('article.id = :id', { id })
       .leftJoinAndSelect('article.tags', 'tag')
       .leftJoinAndSelect('article.category', 'category')
       .leftJoinAndSelect('article.user', 'user')
       .getOne();
+    if (!article) {
+      throw new NotFoundException('资源不存在');
+    }
+    return article;
   }
   /**
    * 查询
@@ -104,11 +111,9 @@ export class ArticleService {
       attr.push(tag);
     }
     article.tags = attr;
-    const category = await this.categoryRepository.findOne({
-      code: dto.category,
-    });
+    const category = await this.categoryRepository.findOne(dto.categoryId);
     if (!category) {
-      throw new BadRequestException(`code为${dto.category}的分类不存在`);
+      throw new BadRequestException(`code为${dto.categoryId}的分类不存在`);
     }
     article.category = category;
     return await this.articleRepository.save(article);
@@ -146,12 +151,10 @@ export class ArticleService {
       article.tags = attr;
     }
     // 如果有分类
-    if (dto.category) {
-      const category = await this.categoryRepository.findOne({
-        code: dto.category,
-      });
+    if (dto.categoryId) {
+      const category = await this.categoryRepository.findOne(dto.categoryId);
       if (!category) {
-        throw new BadRequestException(`code为${dto.category}的分类不存在`);
+        throw new BadRequestException(`code为${dto.categoryId}的分类不存在`);
       }
     }
 

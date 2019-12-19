@@ -1,7 +1,16 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-09-29 22:00:48
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-19 18:12:51
+ */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TreeRepository, DeleteResult } from 'typeorm';
-import { BadRequestException } from '@nestjs/common/exceptions';
+import { Repository, DeleteResult } from 'typeorm';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common/exceptions';
 
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 import { CategoryEntity } from './category.entity';
@@ -9,7 +18,7 @@ import { CategoryEntity } from './category.entity';
 export class CategoryService {
   constructor(
     @InjectRepository(CategoryEntity)
-    private readonly categoryRepository: TreeRepository<CategoryEntity>,
+    private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
   /**
    * 通过id查询分类
@@ -17,20 +26,20 @@ export class CategoryService {
    */
   async findById(id: number): Promise<any> {
     const category = await this.categoryRepository.findOne(id);
-    const ancestorsTree = await this.categoryRepository.findAncestorsTree(
-      category,
-    );
-    if (ancestorsTree.parent) {
-      Object.assign(ancestorsTree, { parent: ancestorsTree.parent.code });
+    if (!category) {
+      throw new NotFoundException('分类不存在');
     }
-    return ancestorsTree;
+    return category;
   }
   /**
-   * 查询分类树
+   * 查询全部分类
    * @param query
    */
-  async findTree(): Promise<CategoryEntity[]> {
-    return await this.categoryRepository.findTrees();
+  async findAll(): Promise<CategoryEntity[]> {
+    return await this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.parent', 'parent')
+      .getMany();
   }
   /**
    * 新增分类
@@ -40,15 +49,12 @@ export class CategoryService {
     const category = new CategoryEntity();
 
     category.name = dto.name;
-    category.code = dto.code;
     category.enabled = dto.enabled;
 
-    if (dto.parent) {
-      const parent = await this.categoryRepository.findOne({
-        code: dto.parent,
-      });
+    if (dto.parentId) {
+      const parent = await this.categoryRepository.findOne(dto.parentId);
       if (!parent) {
-        throw new BadRequestException(`code为${dto.parent}的分类不存在`);
+        throw new BadRequestException(`id${dto.parentId}的分类不存在`);
       }
       category.parent = parent;
     }
@@ -63,21 +69,18 @@ export class CategoryService {
     if (!category) {
       throw new BadRequestException(`id为${id}的分类不存在`);
     }
+
     if ('name' in dto) {
       category.name = dto.name;
     }
-    if ('code' in dto) {
-      category.code = dto.code;
-    }
+
     if ('enabled' in dto) {
       category.enabled = dto.enabled;
     }
-    if (dto.parent) {
-      const parent = await this.categoryRepository.findOne({
-        code: dto.parent,
-      });
+    if (dto.parentId) {
+      const parent = await this.categoryRepository.findOne(dto.parentId);
       if (!parent) {
-        throw new BadRequestException(`code为${dto.parent}的分类不存在`);
+        throw new BadRequestException(`id${dto.parentId}的分类不存在`);
       }
       category.parent = parent;
     }
