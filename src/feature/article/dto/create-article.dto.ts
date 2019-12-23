@@ -1,13 +1,13 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
- * @LastEditors: ERAYLEE
- * @LastEditTime: 2019-12-19 18:22:11
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-20 12:53:55
  */
 import {
   IsNotEmpty,
   IsDefined,
-  IsByteLength,
+  Length,
   Allow,
   IsBoolean,
 } from 'class-validator';
@@ -16,14 +16,16 @@ import { ApiModelProperty } from '@nestjs/swagger';
 export class CreateArticleDto {
   @ApiModelProperty({ description: '标题' })
   @IsDefined()
-  @IsByteLength(0, 30, {
-    message: '标题长度为0~30位',
+  @Length(0, 19, {
+    message: '标题长度为1~20位',
   })
   readonly title: string;
 
   @ApiModelProperty({ description: '描述' })
   @IsDefined()
-  @IsNotEmpty()
+  @Length(0, 29, {
+    message: '描述长度为1~30位',
+  })
   readonly description: string;
 
   @ApiModelProperty({ required: false, description: '是否置顶' })

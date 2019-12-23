@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-19 18:02:49
+ * @LastEditTime : 2019-12-20 09:28:41
  */
 import {
   Entity,
@@ -25,11 +25,8 @@ export class CategoryEntity {
   @Column()
   enabled: boolean;
 
-  @ManyToOne(type => CategoryEntity, category => category.children)
-  parent: CategoryEntity;
-
-  @OneToMany(type => CategoryEntity, category => category.parent)
-  children: CategoryEntity[];
+  @Column('int')
+  parentId: number;
 
   @OneToMany(type => ArticleEntity, article => article.category)
   articles: ArticleEntity[];

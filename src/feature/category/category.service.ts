@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-19 18:12:51
+ * @LastEditTime : 2019-12-20 11:32:43
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,14 +32,19 @@ export class CategoryService {
     return category;
   }
   /**
+   *  通过id查询子分类
+   * @param id
+   */
+  async findByPId(parentId: number): Promise<any> {
+    const categorys = await this.categoryRepository.find({ parentId });
+    return categorys;
+  }
+  /**
    * 查询全部分类
    * @param query
    */
   async findAll(): Promise<CategoryEntity[]> {
-    return await this.categoryRepository
-      .createQueryBuilder('category')
-      .leftJoinAndSelect('category.parent', 'parent')
-      .getMany();
+    return await this.categoryRepository.find();
   }
   /**
    * 新增分类
@@ -56,7 +61,10 @@ export class CategoryService {
       if (!parent) {
         throw new BadRequestException(`id${dto.parentId}的分类不存在`);
       }
-      category.parent = parent;
+      if (parent.parentId) {
+        throw new BadRequestException(`分类不得超过第二层级`);
+      }
+      category.parentId = parent.id;
     }
     return await this.categoryRepository.save(category);
   }
@@ -82,7 +90,10 @@ export class CategoryService {
       if (!parent) {
         throw new BadRequestException(`id${dto.parentId}的分类不存在`);
       }
-      category.parent = parent;
+      if (parent.parentId) {
+        throw new BadRequestException(`分类不得超过第二层级`);
+      }
+      category.parentId = parent.id;
     }
     return this.categoryRepository.save(category);
   }

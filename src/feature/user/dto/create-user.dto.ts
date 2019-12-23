@@ -1,10 +1,10 @@
-import {
-  IsNotEmpty,
-  Matches,
-  IsIn,
-  IsDefined,
-  IsByteLength,
-} from 'class-validator';
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-09-06 21:06:33
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2019-12-23 08:56:14
+ */
+import { IsNotEmpty, Matches, IsIn, IsDefined } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { UserEntity } from '../user.entity';
