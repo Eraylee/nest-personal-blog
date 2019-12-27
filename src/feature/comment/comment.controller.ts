@@ -10,13 +10,13 @@ import {
   Req,
   Request,
 } from '@nestjs/common';
-import { Result } from '../../common/interfaces';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateCommentDto, UpdateCommentDto } from './dto';
 
 import { RolesGuard, AuthGuard } from '../../common/guards';
 import { Roles } from '../../common/decorators';
 import { CommentService } from './comment.service';
+import { BaseController } from '../../common/base';
 
 @ApiBearerAuth()
 @ApiUseTags('comment')
@@ -29,7 +29,7 @@ export class CommentController {
    */
   @ApiOperation({ title: '通过id查询评论' })
   @Get(':id')
-  async getComment(@Param('id') id: number): Promise<Result> {
+  async getComment(@Param('id') id: number) {
     return {
       code: 200,
       message: '查询成功',
@@ -42,7 +42,7 @@ export class CommentController {
    */
   @ApiOperation({ title: '通过id查询评论树' })
   @Get(':id/tree')
-  async getCommentTree(@Param('id') id: number): Promise<Result> {
+  async getCommentTree(@Param('id') id: number) {
     return {
       code: 200,
       message: '查询成功',
@@ -56,10 +56,7 @@ export class CommentController {
    */
   @ApiOperation({ title: '新增评论' })
   @Post()
-  async createComment(
-    @Body() comment: CreateCommentDto,
-    @Req() req: Request,
-  ): Promise<Result> {
+  async createComment(@Body() comment: CreateCommentDto, @Req() req: Request) {
     const ip = '';
     const agent = '';
     return {
@@ -80,7 +77,7 @@ export class CommentController {
   async updateComment(
     @Param('id') id: number,
     @Body() comment: UpdateCommentDto,
-  ): Promise<Result> {
+  ) {
     return {
       code: 200,
       message: '修改成功',

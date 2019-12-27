@@ -6,6 +6,7 @@ import { BadRequestException } from '@nestjs/common/exceptions';
 import { ArticleEntity } from '../article/article.entity';
 import { CommentEntity } from './comment.entity';
 import { CreateCommentDto, UpdateCommentDto } from './dto';
+import { BaseController } from '../../common/base';
 
 @Injectable()
 export class CommentService {
