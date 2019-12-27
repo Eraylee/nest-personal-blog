@@ -1,9 +1,13 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-09-29 21:55:23
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-26 22:06:00
+ */
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
-import { UserRO } from '../../feature/user/user.interface';
-import { UserService } from '../../feature/user/user.service';
 import { JwtPayload } from './jwt-payload.interface';
+import { UserService } from '../../feature/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +19,7 @@ export class AuthService {
   async createToken(payload: JwtPayload): Promise<string> {
     return this.jwtService.sign(payload);
   }
-  async validateUser(payload: JwtPayload): Promise<UserRO> {
-    return await this.userService.findById(payload.id);
+  async validateUser(payload: JwtPayload) {
+    return await this.userService.getOne(payload.id);
   }
 }

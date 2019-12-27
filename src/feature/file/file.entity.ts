@@ -1,17 +1,14 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  Generated,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-11-17 15:08:07
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-26 18:13:13
+ */
+import { Entity, Column } from 'typeorm';
+import { BaseEntity } from '../../common/base/base.entity';
 
 @Entity('file')
-export class FileEntity {
-  @PrimaryGeneratedColumn()
-  public id: number;
-
+export class FileEntity extends BaseEntity {
   @Column()
   public path: string;
 
@@ -31,14 +28,4 @@ export class FileEntity {
 
   @Column()
   public mimeType: string;
-
-  @Column()
-  @Generated('uuid')
-  public fid: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

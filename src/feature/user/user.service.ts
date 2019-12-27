@@ -7,17 +7,12 @@ import { BadRequestException } from '@nestjs/common/exceptions';
 
 import { AuthService } from '../../common/auth/auth.service';
 import { UserEntity } from './user.entity';
-import { UserRO, UsersRO } from './user.interface';
-import {
-  CreateUserDto,
-  QueryUserDto,
-  LoginUserDto,
-  UpdateUserDto,
-  UpdatePasswordDto,
-} from './dto';
+import { BaseService } from '../../common/base';
+import { UserRO } from './user.interface';
+import { LoginUserDto, UpdatePasswordDto } from './dto';
 
 @Injectable()
-export class UserService {
+export class UserService extends BaseService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     protected readonly userRepository: Repository<UserEntity>,
@@ -25,17 +20,8 @@ export class UserService {
     private readonly authService: AuthService,
     @InjectConfig()
     private readonly config: ConfigService,
-  ) {}
-  /**
-   * 通过id查询用户
-   * @param id
-   */
-  async findById(id: number): Promise<UserRO> {
-    const user = await this.userRepository.findOne(id);
-    if (!user) {
-      throw new BadRequestException(`id为${id}的用户不存在`);
-    }
-    return this.buildUserRO(user);
+  ) {
+    super(userRepository);
   }
   /**
    * 用户登录
@@ -77,93 +63,10 @@ export class UserService {
     return user;
   }
   /**
-   * 查询
-   * @param query
-   */
-  async find(query: QueryUserDto): Promise<UsersRO> {
-    const qb = await this.userRepository.createQueryBuilder('user');
-    let offset = 0;
-    let limit = 10;
-    let page = 1;
-    qb.where('1 = 1');
-
-    if ('username' in query) {
-      qb.andWhere('user.name LIKE :username', { name: `%${query.username}%` });
-    }
-    if ('nickname' in query) {
-      qb.andWhere('user.name LIKE :nickname', { name: `%${query.nickname}%` });
-    }
-    if ('limit' in query) {
-      limit = query.limit;
-    }
-    if ('page' in query) {
-      page = query.page;
-      offset = limit * (page - 1);
-    }
-    qb.orderBy('user.createdAt', 'DESC');
-
-    const total = await qb.getCount();
-
-    qb.limit(limit)
-      .offset(offset)
-      .select('user.id')
-      .addSelect('user.role')
-      .addSelect('user.username')
-      .addSelect('user.nickname')
-      .addSelect('user.createdAt')
-      .addSelect('user.updatedAt');
-    const data = await qb.getMany();
-    return { data, total, page };
-  }
-  /**
-   * 创建用户
-   * @param dto
-   */
-  async create(dto: CreateUserDto): Promise<UserRO> {
-    const { username, password, nickname, role } = dto;
-    const user = await this.userRepository.findOne({ username });
-
-    if (user) {
-      throw new BadRequestException('此用户已存在');
-    }
-
-    const newUser = new UserEntity();
-    newUser.username = username;
-    newUser.password = this.config.get('service.DEFAULT_PASSWORD');
-    newUser.nickname = nickname;
-    newUser.role = role;
-
-    const savedUser = await this.userRepository.save(newUser);
-    return this.buildUserRO(savedUser);
-  }
-  /**
-   * 删除
-   * @param ids
-   */
-  async remove(ids: number[]): Promise<DeleteResult> {
-    return await this.userRepository.delete(ids);
-  }
-  /**
-   * 修改用户
-   * @param dto
-   */
-  async update(id: number, dto: UpdateUserDto): Promise<UserRO> {
-    const toUpdate: UserEntity = await this.userRepository.findOne(id);
-    if (!toUpdate) {
-      throw new BadRequestException(`id为${id}的用户不存在`);
-    }
-    toUpdate.nickname = dto.nickname;
-    if ('role' in dto) {
-      toUpdate.role = dto.role;
-    }
-    const savedUser = await this.userRepository.save(toUpdate);
-    return this.buildUserRO(savedUser);
-  }
-  /**
    * 修改密码
    * @param dto
    */
-  async updatePassword(id: number, dto: UpdatePasswordDto): Promise<UserRO> {
+  async updatePassword(id: string, dto: UpdatePasswordDto): Promise<UserRO> {
     const findOptions = {
       id,
       password: crypto.createHmac('sha256', dto.oldPassword).digest('hex'),
@@ -182,26 +85,26 @@ export class UserService {
     }
     toUpdate.password = dto.newPassword;
     const savedUser = await this.userRepository.save(toUpdate);
-    return this.buildUserRO(savedUser);
+    return this.buildUser(savedUser);
   }
   /**
    * 重置密码
    * @param dto
    */
-  async resetPassword(id: number): Promise<UserRO> {
+  async resetPassword(id: string): Promise<UserRO> {
     const toUpdate: UserEntity = await this.userRepository.findOne(id);
     if (!toUpdate) {
       throw new BadRequestException(`id为${id}的用户不存在`);
     }
     toUpdate.password = this.config.get('service.DEFAULT_PASSWORD');
     const savedUser = await this.userRepository.save(toUpdate);
-    return this.buildUserRO(savedUser);
+    return this.buildUser(savedUser);
   }
   /**
    * 构建UserRO
    * @param user
    */
-  private buildUserRO(user: UserEntity) {
+  private buildUser(user: UserEntity) {
     const userRO = {
       id: user.id,
       username: user.username,

@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
- * @LastEditors: ERAYLEE
- * @LastEditTime: 2019-12-19 18:08:37
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-26 18:16:34
  */
 import { Allow } from 'class-validator';
 import { QueryDto } from '../../../common/dto/query.dto';
@@ -19,5 +19,5 @@ export class QueryCategoryDto extends QueryDto {
 
   @ApiModelProperty({ required: false, description: '父级分类id' })
   @Allow()
-  readonly parentId?: number;
+  readonly parentId?: string;
 }

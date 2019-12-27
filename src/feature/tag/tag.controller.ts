@@ -1,107 +1,39 @@
-import {
-  Get,
-  Post,
-  Body,
-  Put,
-  Delete,
-  Param,
-  Controller,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
-import { Result } from '../../common/interfaces';
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-09-30 00:02:55
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-27 13:03:40
+ */
+import { Post, Body, Controller, UseGuards } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 import { RolesGuard, AuthGuard } from '../../common/guards';
 import { Roles } from '../../common/decorators';
 import { TagService } from './tag.service';
+import { BaseController } from '../../common/base';
 import { QueryTagDto, CreateTagDto, UpdateTagDto } from './dto';
+import { TagEntity } from './tag.entity';
 
 @ApiBearerAuth()
 @ApiUseTags('tag')
 @Controller('tag')
-export class TagController {
-  constructor(private readonly tagService: TagService) {}
-  /**
-   * 通过id查询标签
-   * @param query
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '通过id查询标签' })
-  @UseGuards(AuthGuard)
-  @Get(':id')
-  async getTagById(@Param('id') id: number) {
-    return {
-      code: 200,
-      message: '查询成功',
-      data: await this.tagService.findById(id),
-    };
-  }
-  /**
-   * 查询标签
-   * @param query
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '查询标签' })
-  @UseGuards(AuthGuard)
-  @Get()
-  async getTags(@Query() query: QueryTagDto) {
-    return {
-      code: 200,
-      message: '查询成功',
-      data: await this.tagService.find(query),
-    };
+export class TagController extends BaseController<TagEntity> {
+  constructor(private readonly service: TagService) {
+    super(service);
   }
   /**
    * 新增标签
    * @param tag
-   * @return Promise<Result>
    */
   @ApiOperation({ title: '新增标签' })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Post()
-  async createTag(@Body() tag: CreateTagDto): Promise<Result> {
+  async create(@Body() tag: CreateTagDto) {
     return {
       code: 200,
       message: '新增成功',
-      data: await this.tagService.create(tag),
-    };
-  }
-  /**
-   * 删标签
-   * @param ids
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '删除标签' })
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
-  @Delete()
-  async deleteTag(@Body('ids') ids: number[]) {
-    return {
-      code: 200,
-      message: '删除成功',
-      data: await this.tagService.remove(ids),
-    };
-  }
-
-  /**
-   * 修改标签
-   * @param tag
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '修改标签' })
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
-  @Put(':id')
-  async updateTag(
-    @Param('id') id: number,
-    @Body() tag: UpdateTagDto,
-  ): Promise<Result> {
-    return {
-      code: 200,
-      message: '修改成功',
-      data: await this.tagService.update(id, tag),
+      data: await this.service.create(tag),
     };
   }
 }

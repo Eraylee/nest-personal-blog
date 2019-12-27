@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-10-01 00:46:38
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-27 14:12:56
+ */
 import {
   Get,
   Post,
@@ -8,45 +14,33 @@ import {
   Controller,
   UseGuards,
 } from '@nestjs/common';
-import { Result } from '../../common/interfaces';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 import { RolesGuard, AuthGuard } from '../../common/guards';
 import { Roles } from '../../common/decorators';
 import { CategoryService } from './category.service';
 import { UpdateCategoryDto, CreateCategoryDto } from './dto';
+import { BaseController } from '../../common/base';
+import { CategoryEntity } from './category.entity';
 
 @ApiBearerAuth()
 @ApiUseTags('category')
 @Controller('category')
-export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
-  /**
-   * 通过id查询分类
-   * @param id
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '通过id查询分类' })
-  @UseGuards(AuthGuard)
-  @Get(':id')
-  async getcategoryById(@Param('id') id: number) {
-    return {
-      code: 200,
-      message: '查询成功',
-      data: await this.categoryService.findById(id),
-    };
+export class CategoryController extends BaseController<CategoryEntity> {
+  constructor(private readonly service: CategoryService) {
+    super(service);
   }
   /**
    * 查询分类树
    * @return Promise<Result>
    */
   @ApiOperation({ title: '查询分类' })
-  @Get()
+  @Get('/all')
   async getcategorys() {
     return {
       code: 200,
       message: '查询成功',
-      data: await this.categoryService.findAll(),
+      data: await this.service.findAll(),
     };
   }
   /**
@@ -58,46 +52,11 @@ export class CategoryController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Post()
-  async createcategory(@Body() category: CreateCategoryDto): Promise<Result> {
+  async createcategory(@Body() category: CreateCategoryDto) {
     return {
       code: 200,
       message: '新增成功',
-      data: await this.categoryService.create(category),
-    };
-  }
-  /**
-   * 删除分类
-   * @param id
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '删除分类' })
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
-  @Delete(':id')
-  async deletecategory(@Param('id') id: number) {
-    return {
-      code: 200,
-      message: '删除成功',
-      data: await this.categoryService.delete(id),
-    };
-  }
-  /**
-   * 修改分类
-   * @param category
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '修改分类' })
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
-  @Put(':id')
-  async updateUser(
-    @Param('id') id: number,
-    @Body() category: UpdateCategoryDto,
-  ): Promise<Result> {
-    return {
-      code: 200,
-      message: '修改成功',
-      data: await this.categoryService.update(id, category),
+      data: await this.service.create(category),
     };
   }
 }

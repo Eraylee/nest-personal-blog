@@ -20,5 +20,5 @@ export class CreateCategoryDto {
 
   @ApiModelProperty({ required: false, description: '父级分类' })
   @Allow()
-  readonly parentId?: number;
+  readonly parentId?: string;
 }

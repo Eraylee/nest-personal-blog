@@ -2,21 +2,13 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-22 22:25:46
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-23 08:51:50
+ * @LastEditTime : 2019-12-26 18:06:01
  */
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, Column } from 'typeorm';
+import { BaseEntity } from '../../common/base/base.entity';
 
 @Entity('link')
-export class LinkEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class LinkEntity extends BaseEntity {
   @Column()
   owner: string;
 
@@ -25,10 +17,4 @@ export class LinkEntity {
 
   @Column()
   description: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

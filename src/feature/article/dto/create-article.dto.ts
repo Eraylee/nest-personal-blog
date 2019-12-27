@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-20 12:53:55
+ * @LastEditTime : 2019-12-27 17:57:23
  */
 import {
   IsNotEmpty,
@@ -57,10 +57,10 @@ export class CreateArticleDto {
   @ApiModelProperty({ description: '文章分类id' })
   @IsDefined()
   @IsNotEmpty()
-  readonly categoryId: number;
+  readonly categoryId: string;
 
   @ApiModelProperty({ description: '文章标签id集合' })
   @IsDefined()
   @IsNotEmpty()
-  readonly tags: number[];
+  readonly tags: string[];
 }

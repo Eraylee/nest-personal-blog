@@ -6,47 +6,15 @@ import { join } from 'path';
 import { Repository } from 'typeorm';
 import { FileEntity } from './file.entity';
 import { QueryFileDto, CreateFileDto } from './dto';
-
+import { BaseService } from '../../common/base';
 const BASE_PATH = '../../../public';
 @Injectable()
-export class FileService {
+export class FileService extends BaseService<FileEntity> {
   constructor(
     @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
-  ) {}
-  /**
-   * 通过文件id查询文件
-   * @param fid
-   */
-  public async findByFid(fid: string) {
-    return await this.fileRepository.findOne({ fid });
-  }
-  /**
-   * 查询
-   * @param query
-   */
-  public async find(query: QueryFileDto) {
-    const qb = await this.fileRepository.createQueryBuilder('file');
-    let offset = 0;
-    let limit = 10;
-    let page = 1;
-    qb.where('1 = 1');
-
-    if (query.limit) {
-      limit = query.limit;
-    }
-    if (query.page) {
-      page = query.page;
-      offset = limit * (page - 1);
-    }
-
-    const total = await qb.getCount();
-
-    qb.limit(limit)
-      .offset(offset)
-      .getMany();
-    const data = await qb.getMany();
-    return { data, total, page };
+    private readonly repository: Repository<FileEntity>,
+  ) {
+    super(repository);
   }
   /**
    * 上传
@@ -72,45 +40,26 @@ export class FileService {
       file.fileName = fileName;
       file.path = `/file/${path}/`;
 
-      const res = await this.fileRepository.save(file);
+      const res = await this.repository.save(file);
 
       await writeFile.write(dto.buffer);
-      return res.fid;
+      return res.id;
     } catch (error) {
       throw error;
     }
   }
   /**
    * 删除
-   * @param fid
+   * @param id
    */
-  public async removeByFid(fid: string) {
-    const file = await this.fileRepository.findOne({ fid });
+  public async removeById(id: string) {
+    const file = await this.repository.findOne({ id });
     if (!file) {
-      throw new BadRequestException(`删除fid为${fid}的文件不存在`);
+      throw new BadRequestException(`id${id}的文件不存在`);
     }
     const path = join(__dirname, BASE_PATH, file.path, file.fileName);
     this.deleteFile(path);
-    await this.fileRepository.remove(file);
-  }
-  /**
-   * 删除
-   * @param fid
-   */
-  public async remove(ids: number[]) {
-    try {
-      for (const id of ids) {
-        const file = await this.fileRepository.findOne(id);
-        if (!file) {
-          throw new BadRequestException(`id${id}的文件不存在`);
-        }
-        const path = join(__dirname, BASE_PATH, file.path, file.fileName);
-        this.deleteFile(path);
-        await this.fileRepository.remove(file);
-      }
-    } catch (error) {
-      throw error;
-    }
+    await this.repository.remove(file);
   }
   /**
    * 检查是否有文件夹，没有就新建文件夹

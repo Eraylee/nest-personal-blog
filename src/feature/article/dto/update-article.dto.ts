@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
- * @LastEditors: ERAYLEE
- * @LastEditTime: 2019-12-19 18:22:29
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-27 17:57:35
  */
 import {
   IsNotEmpty,
@@ -55,10 +55,10 @@ export class UpdateArticleDto implements Partial<CreateArticleDto> {
 
   @ApiModelProperty({ required: false, description: '文章分类id' })
   @Allow()
-  readonly categoryId: number;
+  readonly categoryId: string;
 
   @ApiModelProperty({ description: '文章标签id集合' })
   @IsDefined()
   @IsNotEmpty()
-  readonly tags: number[];
+  readonly tags: string[];
 }

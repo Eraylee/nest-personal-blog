@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-11-17 16:09:01
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-27 13:08:03
+ */
 import {
   Get,
   Post,
@@ -15,40 +21,17 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 import { CreateFileDto, QueryFileDto } from './dto';
 import { FileService } from './file.service';
+import { BaseController } from '../../common/base';
+import { FileEntity } from './file.entity';
 
 @ApiBearerAuth()
 @ApiUseTags('file')
 @Controller('file')
-export class FileController {
-  constructor(private readonly fileService: FileService) {}
-  /**
-   * 查询文件
-   * @param fid
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '通过fid查询文件' })
-  @Get(':fid')
-  async getFile(@Param('fid') fid: string) {
-    return {
-      code: 200,
-      message: '查询成功',
-      data: await this.fileService.findByFid(fid),
-    };
+export class FileController extends BaseController<FileEntity> {
+  constructor(private readonly service: FileService) {
+    super(service);
   }
-  /**
-   * 查询文件
-   * @param query
-   * @return Promise<Result>
-   */
-  @ApiOperation({ title: '查询文件' })
-  @Get()
-  async getFiles(@Query() query: QueryFileDto) {
-    return {
-      code: 200,
-      message: '查询成功',
-      data: await this.fileService.find(query),
-    };
-  }
+
   /**
    * 上传文件
    * @param files
@@ -61,29 +44,16 @@ export class FileController {
     @UploadedFile() files: CreateFileDto,
     @Body('path') path: string,
   ) {
-    return await this.fileService.upload(files, path);
+    return await this.service.upload(files, path);
   }
   /**
-   * 根据fid 删除文件
-   * @param fid
+   * 根据id 删除文件
+   * @param id
    */
   @ApiOperation({ title: '通过fid删除文件' })
-  @Delete('/byFid')
-  async deleteFileByFid(@PlainBody() fid: string) {
-    await this.fileService.removeByFid(fid);
-    return {
-      code: 200,
-      message: '删除成功',
-    };
-  }
-  /**
-   * 批量删除文件
-   * @param ids
-   */
-  @ApiOperation({ title: '删除文件' })
   @Delete()
-  async deleteFiles(@Body('ids') ids: number[]) {
-    await this.fileService.remove(ids);
+  async deleteFileByFid(@PlainBody() id: string) {
+    await this.service.removeById(id);
     return {
       code: 200,
       message: '删除成功',

@@ -1,23 +1,24 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2019-10-01 01:14:08
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2019-12-26 18:13:59
+ */
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   JoinColumn,
   ManyToOne,
   Tree,
   TreeParent,
   TreeChildren,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
+import { BaseEntity } from '../../common/base/base.entity';
 
 @Entity('comment')
 @Tree('materialized-path')
-export class CommentEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class CommentEntity extends BaseEntity {
   @Column()
   authorName: string;
 
@@ -35,12 +36,6 @@ export class CommentEntity {
 
   @Column('text')
   content: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @TreeChildren()
   children: CommentEntity[];

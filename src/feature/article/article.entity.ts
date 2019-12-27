@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
- * @LastEditors: ERAYLEE
- * @LastEditTime: 2019-12-17 09:27:32
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-27 18:05:55
  */
 import {
   Entity,
@@ -83,15 +83,33 @@ export class ArticleEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(type => UserEntity, user => user.articles)
+  @ManyToOne(type => UserEntity, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    eager: true,
+    nullable: true,
+  })
   @JoinColumn()
   user: UserEntity;
 
-  @ManyToOne(type => CategoryEntity, category => category)
+  @ManyToOne(type => CategoryEntity, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    eager: true,
+    nullable: true,
+  })
   @JoinColumn()
   category: CategoryEntity;
 
-  @ManyToMany(type => TagEntity, tag => tag.articles)
+  @ManyToMany(type => TagEntity, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    eager: true,
+    nullable: true,
+  })
   @JoinTable()
   tags: TagEntity[];
 }

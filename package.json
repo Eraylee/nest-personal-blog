@@ -35,11 +35,12 @@
     "nestjs-config": "^1.4.4",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
+    "pg": "^7.15.2",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3",
     "swagger-ui-express": "^4.0.7",
-    "typeorm": "^0.2.18"
+    "typeorm": "^0.2.22"
   },
   "devDependencies": {
     "@nestjs/testing": "6.1.1",
