@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
- * @LastEditors: ERAYLEE
- * @LastEditTime: 2019-12-19 18:08:25
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-29 17:03:03
  */
 import { IsNotEmpty, IsBoolean, IsDefined, Allow } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
@@ -19,6 +19,5 @@ export class CreateCategoryDto {
   readonly enabled: boolean;
 
   @ApiModelProperty({ required: false, description: '父级分类' })
-  @Allow()
   readonly parentId?: string;
 }

@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-11-17 15:08:07
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-26 18:13:13
+ * @LastEditTime : 2019-12-29 18:29:28
  */
 import { Entity, Column } from 'typeorm';
 import { BaseEntity } from '../../common/base/base.entity';
@@ -18,9 +18,7 @@ export class FileEntity extends BaseEntity {
   @Column()
   public fileName: string;
 
-  @Column({
-    type: 'int',
-  })
+  @Column('int')
   public size: number;
 
   @Column()

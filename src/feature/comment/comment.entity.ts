@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-10-01 01:14:08
- * @LastEditors: ERAYLEE
- * @LastEditTime: 2019-12-26 18:13:59
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2019-12-29 18:31:44
  */
 import {
   Entity,
@@ -19,19 +19,26 @@ import { BaseEntity } from '../../common/base/base.entity';
 @Entity('comment')
 @Tree('materialized-path')
 export class CommentEntity extends BaseEntity {
-  @Column()
+  @Column({
+    length: 32,
+  })
   authorName: string;
 
-  @Column()
+  @Column({
+    length: 60,
+  })
   authorMail: string;
 
-  @Column()
+  @Column({
+    length: 100,
+    nullable: true,
+  })
   authorUrl: string;
 
-  @Column()
+  @Column({ length: 60, nullable: true })
   authorIp: string;
 
-  @Column()
+  @Column({ length: 60, nullable: true })
   authorAgent: string;
 
   @Column('text')

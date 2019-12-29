@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-25 21:39:59
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-26 16:31:26
+ * @LastEditTime : 2019-12-29 20:29:32
  */
 import {
   Get,
@@ -15,7 +15,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PaginationDto } from './base.dto';
+import { PaginationDto, DeleteDto } from './base.dto';
 import { BaseService } from './base.service';
 import { Roles } from '../../common/decorators';
 import { Result, PaginationResult } from '../interfaces';
@@ -31,8 +31,8 @@ export abstract class BaseController<T> {
    */
   @Get()
   @ApiOperation({ title: '分页查询' })
-  public async getMany<D extends PaginationDto>(
-    @Query() query: D,
+  public async getMany(
+    @Query() query: PaginationDto,
   ): Promise<Result<PaginationResult<T>>> {
     return {
       code: 200,
@@ -61,11 +61,11 @@ export abstract class BaseController<T> {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Delete()
-  public async delete(@Body('ids') ids: string[]) {
+  public async delete(@Body() dto: DeleteDto) {
     return {
       code: 200,
       message: '删除成功',
-      data: await this.baseService.delete(ids),
+      data: await this.baseService.delete(dto.ids),
     };
   }
 }

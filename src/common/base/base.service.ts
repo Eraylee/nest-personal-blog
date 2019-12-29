@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-25 21:38:39
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-26 16:31:38
+ * @LastEditTime : 2019-12-29 21:31:21
  */
 import { NotFoundException, BadGatewayException } from '@nestjs/common';
 import { DeleteResult, Repository, ObjectLiteral } from 'typeorm';
@@ -21,33 +21,63 @@ export abstract class BaseService<T> {
     }
     return res;
   }
+  // /**
+  //  * 分页查询
+  //  * @param query
+  //  */
+  // public async getMany<D extends PaginationDto>(
+  //   query: D,
+  // ): Promise<PaginationResult<T>> {
+  //   const qb = await this.repo.createQueryBuilder(this.repo.metadata.name);
+  //   let offset = 0;
+  //   let limit = 10;
+  //   let page = 1;
+
+  //   if (query.limit) {
+  //     limit = query.limit;
+  //   }
+  //   if (query.page) {
+  //     page = query.page;
+  //     offset = limit * (page - 1);
+  //   }
+  //   qb.orderBy(this.repo.metadata.name + '.createdAt', query.sort || 'DESC');
+
+  //   const total = await qb.getCount();
+
+  //   qb.limit(limit).offset(offset);
+  //   const data = await qb.getMany();
+
+  //   return { data, total, page };
+  // }
   /**
    * 分页查询
    * @param query
    */
-  public async getMany<D extends PaginationDto>(
-    query: D,
-  ): Promise<PaginationResult<T>> {
-    const qb = await this.repo.createQueryBuilder(this.repo.metadata.name);
-    let offset = 0;
-    let limit = 10;
+  public async getMany(query: PaginationDto): Promise<PaginationResult<T>> {
+    let skip = 0;
+    let take = 10;
     let page = 1;
-
     if (query.limit) {
-      limit = query.limit;
+      take = query.limit;
     }
     if (query.page) {
       page = query.page;
-      offset = limit * (page - 1);
+      skip = take * (page - 1);
     }
-    qb.orderBy(this.repo.metadata.name + '.createdAt', query.sort || 'DESC');
+    const order: any = {
+      createdAt: query.sort || 'DESC',
+    };
 
-    const total = await qb.getCount();
-
-    qb.limit(limit).offset(offset);
-    const data = await qb.getMany();
-
-    return { data, total, page };
+    const [data, total] = await this.repo.findAndCount({
+      order,
+      skip,
+      take,
+    });
+    return {
+      data,
+      total,
+      page,
+    };
   }
   /**
    * 创建
