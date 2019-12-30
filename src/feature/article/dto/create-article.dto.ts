@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-27 17:57:23
+ * @LastEditTime : 2019-12-30 21:36:33
  */
 import {
   IsNotEmpty,
@@ -51,7 +51,8 @@ export class CreateArticleDto {
   readonly isDraft?: boolean;
 
   @ApiModelProperty({ required: false, description: '文章封面' })
-  @Allow()
+  @IsDefined()
+  @IsNotEmpty()
   readonly cover?: string;
 
   @ApiModelProperty({ description: '文章分类id' })
