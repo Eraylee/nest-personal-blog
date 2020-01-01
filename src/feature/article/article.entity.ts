@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-29 18:33:24
+ * @LastEditTime : 2020-01-01 13:48:26
  */
 import {
   Entity,
@@ -10,11 +10,13 @@ import {
   JoinColumn,
   ManyToOne,
   ManyToMany,
+  OneToOne,
   JoinTable,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { BaseEntity } from '../../common/base';
 import { CategoryEntity } from '../category/category.entity';
+import { FileEntity } from '../file/file.entity';
 import { TagEntity } from '../tag/tag.entity';
 
 @Entity('article')
@@ -55,9 +57,6 @@ export class ArticleEntity extends BaseEntity {
   })
   isDraft: boolean;
 
-  @Column()
-  cover: string;
-
   @Column({
     type: 'int',
     default: 0,
@@ -89,6 +88,16 @@ export class ArticleEntity extends BaseEntity {
   })
   @JoinColumn()
   category: CategoryEntity;
+
+  @OneToOne(type => FileEntity, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  cover: FileEntity;
 
   @ManyToMany(type => TagEntity, {
     cascade: true,

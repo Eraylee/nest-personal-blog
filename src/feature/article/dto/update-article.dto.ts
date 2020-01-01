@@ -2,13 +2,14 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-27 17:57:35
+ * @LastEditTime : 2020-01-01 13:53:50
  */
 import {
   IsNotEmpty,
   Allow,
   IsDefined,
   IsBoolean,
+  IsUUID,
   IsByteLength,
 } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
@@ -49,16 +50,14 @@ export class UpdateArticleDto implements Partial<CreateArticleDto> {
   @IsBoolean()
   readonly isDraft: boolean;
 
-  @ApiModelProperty({ required: false, description: '文章封面' })
-  @Allow()
-  readonly cover: string;
+  @ApiModelProperty({ required: false, description: '文章封面id' })
+  @IsUUID()
+  readonly coverId: string;
 
   @ApiModelProperty({ required: false, description: '文章分类id' })
-  @Allow()
+  @IsUUID()
   readonly categoryId: string;
 
   @ApiModelProperty({ description: '文章标签id集合' })
-  @IsDefined()
-  @IsNotEmpty()
   readonly tags: string[];
 }

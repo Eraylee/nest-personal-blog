@@ -2,13 +2,13 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-30 21:36:33
+ * @LastEditTime : 2020-01-01 13:52:52
  */
 import {
   IsNotEmpty,
   IsDefined,
   Length,
-  Allow,
+  IsUUID,
   IsBoolean,
 } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
@@ -50,14 +50,14 @@ export class CreateArticleDto {
   @IsBoolean()
   readonly isDraft?: boolean;
 
-  @ApiModelProperty({ required: false, description: '文章封面' })
+  @ApiModelProperty({ required: false, description: '文章封面Id' })
   @IsDefined()
-  @IsNotEmpty()
-  readonly cover?: string;
+  @IsUUID()
+  readonly coverId: string;
 
   @ApiModelProperty({ description: '文章分类id' })
   @IsDefined()
-  @IsNotEmpty()
+  @IsUUID()
   readonly categoryId: string;
 
   @ApiModelProperty({ description: '文章标签id集合' })

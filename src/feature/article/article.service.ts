@@ -10,9 +10,10 @@ import { TagEntity } from '../tag/tag.entity';
 import { ArticleEntity } from './article.entity';
 import { UserEntity } from '../user/user.entity';
 import { UserRO } from '../user/user.interface';
+import { FileEntity } from '../file/file.entity';
 import { CategoryEntity } from '../category/category.entity';
 import { BaseService } from '../../common/base';
-import { CreateArticleDto, UpdateArticleDto, QueryArticleDto } from './dto';
+import { CreateArticleDto } from './dto';
 
 @Injectable()
 export class ArticleService extends BaseService<ArticleEntity> {
@@ -27,7 +28,10 @@ export class ArticleService extends BaseService<ArticleEntity> {
     private readonly userRepository: Repository<UserEntity>,
 
     @InjectRepository(TagEntity)
-    private readonly tagRepository: TreeRepository<TagEntity>,
+    private readonly tagRepository: Repository<TagEntity>,
+
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
   ) {
     super(articleRepository);
   }
@@ -105,9 +109,13 @@ export class ArticleService extends BaseService<ArticleEntity> {
     article.markdown = dto.markdown;
     article.html = dto.html;
     article.user = await this.userRepository.findOne(user.id);
-    if (dto.cover) {
-      article.cover = dto.cover;
+    const cover = await this.fileRepository.findOne(dto.coverId);
+    if (!cover) {
+      if (!cover) {
+        throw new BadRequestException(`id${dto.categoryId}的文件不存在`);
+      }
     }
+    article.cover = cover;
     const attr = [];
     for (const item of dto.tags) {
       const tag = await this.tagRepository.findOne(item);
