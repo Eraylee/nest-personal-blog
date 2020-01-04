@@ -2,12 +2,12 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-06 21:06:33
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-29 18:36:18
+ * @LastEditTime : 2020-01-04 23:09:44
  */
 import { Entity, Column, BeforeInsert, OneToMany } from 'typeorm';
 import * as crypto from 'crypto';
 import { ArticleEntity } from '../article/article.entity';
-import { Exclude } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { BaseEntity } from '../../common/base/base.entity';
 
 @Entity('user')
@@ -19,7 +19,7 @@ export class UserEntity extends BaseEntity {
   nickname: string;
 
   @Column({ length: 64 })
-  @Exclude()
+  @Expose()
   password: string;
 
   @Column({

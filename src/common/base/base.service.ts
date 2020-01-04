@@ -2,12 +2,13 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-25 21:38:39
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-31 09:36:54
+ * @LastEditTime : 2020-01-04 22:36:55
  */
 import { NotFoundException, BadGatewayException } from '@nestjs/common';
 import { DeleteResult, Repository, ObjectLiteral } from 'typeorm';
 import { PaginationDto } from './base.dto';
 import { PaginationResult } from '../interfaces';
+
 export abstract class BaseService<T> {
   protected constructor(protected readonly repo: Repository<T>) {}
   /**
@@ -77,8 +78,8 @@ export abstract class BaseService<T> {
       data,
       total,
       page,
-      // tslint:disable-next-line: no-bitwise
-      maxPage: (total / page) | 1,
+      limit: take,
+      maxPage: Math.ceil(total / take) ,
     };
   }
   /**

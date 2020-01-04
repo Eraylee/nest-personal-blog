@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-25 21:39:59
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-29 20:29:32
+ * @LastEditTime : 2020-01-04 21:42:00
  */
 import {
   Get,
@@ -14,6 +14,8 @@ import {
   Controller,
   Query,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { PaginationDto, DeleteDto } from './base.dto';
 import { BaseService } from './base.service';
@@ -22,6 +24,7 @@ import { Result, PaginationResult } from '../interfaces';
 import { RolesGuard, AuthGuard } from '../../common/guards';
 import { ApiOperation } from '@nestjs/swagger';
 
+@UseInterceptors(ClassSerializerInterceptor)
 export abstract class BaseController<T> {
   protected constructor(protected readonly baseService: BaseService<T>) {}
 
@@ -29,6 +32,7 @@ export abstract class BaseController<T> {
    * 分页查询
    * @param query
    */
+
   @Get()
   @ApiOperation({ title: '分页查询' })
   public async getMany(

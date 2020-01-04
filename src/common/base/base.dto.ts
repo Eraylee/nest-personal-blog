@@ -2,18 +2,21 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-25 22:22:58
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-29 21:35:24
+ * @LastEditTime : 2020-01-04 23:13:00
  */
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsNumberString, IsEnum, IsArray } from 'class-validator';
+import { IsNumber, IsEnum, IsArray } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class PaginationDto {
   @ApiModelProperty({ required: false, description: '页码' })
-  @IsNumberString()
+  @IsNumber()
+  @Transform(value => Number(value))
   readonly page?: number;
 
   @ApiModelProperty({ required: false, description: '每页显示多少' })
-  @IsNumberString()
+  @IsNumber()
+  @Transform(value => Number(value))
   readonly limit?: number;
 
   @ApiModelProperty({ required: false, description: '排序' })
