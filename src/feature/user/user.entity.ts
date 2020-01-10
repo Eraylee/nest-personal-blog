@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-06 21:06:33
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-04 23:09:44
+ * @LastEditTime : 2020-01-10 08:51:50
  */
 import { Entity, Column, BeforeInsert, OneToMany } from 'typeorm';
 import * as crypto from 'crypto';
@@ -19,7 +19,6 @@ export class UserEntity extends BaseEntity {
   nickname: string;
 
   @Column({ length: 64 })
-  @Expose()
   password: string;
 
   @Column({
@@ -35,4 +34,9 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(type => ArticleEntity, article => article.user)
   articles: ArticleEntity[];
+
+  @Expose({ name: 'password' })
+  private getPassword() {
+    return '█████████';
+  }
 }

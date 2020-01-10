@@ -30,7 +30,7 @@ export class UserService extends BaseService<UserEntity> {
   async login(dto: LoginUserDto): Promise<UserRO> {
     const findOptions = {
       username: dto.username,
-      password: crypto.createHmac('sha256', dto.password).digest('hex'),
+      password: this.buildPassword(dto.password),
     };
     // tslint:disable-next-line: variable-name
     const _user = await this.userRepository
@@ -69,7 +69,7 @@ export class UserService extends BaseService<UserEntity> {
   async updatePassword(id: string, dto: UpdatePasswordDto): Promise<UserRO> {
     const findOptions = {
       id,
-      password: crypto.createHmac('sha256', dto.oldPassword).digest('hex'),
+      password: this.buildPassword(dto.oldPassword),
     };
     // tslint:disable-next-line: variable-name
     const toUpdate = await this.userRepository
@@ -96,7 +96,9 @@ export class UserService extends BaseService<UserEntity> {
     if (!toUpdate) {
       throw new BadRequestException(`id为${id}的用户不存在`);
     }
-    toUpdate.password = this.config.get('service.DEFAULT_PASSWORD');
+    toUpdate.password = this.buildPassword(
+      this.config.get('service.DEFAULT_PASSWORD'),
+    );
     const savedUser = await this.userRepository.save(toUpdate);
     return this.buildUser(savedUser);
   }
@@ -115,5 +117,12 @@ export class UserService extends BaseService<UserEntity> {
     };
 
     return userRO;
+  }
+  /**
+   * 加密密码
+   * @param password
+   */
+  private buildPassword(password: string): string {
+    return crypto.createHmac('sha256', password).digest('hex');
   }
 }
