@@ -2,9 +2,9 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-22 22:25:46
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-23 08:57:14
+ * @LastEditTime : 2020-01-12 16:08:04
  */
-import { IsNotEmpty, IsUrl, IsDefined } from 'class-validator';
+import { IsNotEmpty, IsUrl, IsUUID, IsDefined } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { LinkEntity } from '../link.entity';
 
@@ -18,6 +18,11 @@ export class LinkDto implements Partial<LinkEntity> {
   @IsDefined()
   @IsUrl()
   readonly url: string;
+
+  @ApiModelProperty({ description: '头像' })
+  @IsDefined()
+  @IsUUID()
+  readonly avatarId: string;
 
   @ApiModelProperty({ description: '描述' })
   @IsDefined()
