@@ -2,25 +2,20 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-06 21:06:33
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-29 17:40:57
+ * @LastEditTime : 2020-01-27 14:07:59
  */
 import {
-  UseInterceptors,
   Post,
   Body,
   Put,
-  Delete,
   Param,
   Controller,
-  ClassSerializerInterceptor,
   UseGuards,
 } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import {
   CreateUserDto,
-  QueryUserDto,
   LoginUserDto,
-  UpdateUserDto,
   UpdatePasswordDto,
 } from './dto';
 import { UserService } from './user.service';
@@ -30,7 +25,6 @@ import { BaseController } from '../../common/base';
 import { UserEntity } from './user.entity';
 
 @ApiBearerAuth()
-@UseInterceptors(ClassSerializerInterceptor)
 @ApiUseTags('user')
 @Controller('user')
 export class UserController extends BaseController<UserEntity> {
