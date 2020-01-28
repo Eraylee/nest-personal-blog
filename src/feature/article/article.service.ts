@@ -132,46 +132,50 @@ export class ArticleService extends BaseService<ArticleEntity> {
     article.category = category;
     return await this.articleRepository.save(article);
   }
-  // /**
-  //  * 修改文章
-  //  * @param id
-  //  * @param dto
-  //  */
-  // async update(id: number, dto: UpdateArticleDto) {
-  //   const article = await this.articleRepository.findOne(id);
-  //   if (!article) {
-  //     throw new BadRequestException(`id为${id}的文章不存在`);
-  //   }
-  //   article.title = dto.title;
-  //   article.description = dto.description;
-  //   article.isTop = dto.isTop;
-  //   article.isDraft = dto.isDraft;
-  //   article.allowComment = dto.allowComment;
-  //   article.html = dto.html;
-  //   article.markdown = dto.markdown;
-  //   if (dto.cover) {
-  //     article.cover = dto.cover;
-  //   }
-  //   // 如果有标签
-  //   if (dto.tags) {
-  //     const attr = [];
-  //     for (const item of dto.tags) {
-  //       const tag = await this.tagRepository.findOne(item);
-  //       if (!tag) {
-  //         throw new BadRequestException(`id为${item}的标签不存在`);
-  //       }
-  //       attr.push(tag);
-  //     }
-  //     article.tags = attr;
-  //   }
-  //   // 如果有分类
-  //   if (dto.categoryId) {
-  //     const category = await this.categoryRepository.findOne(dto.categoryId);
-  //     if (!category) {
-  //       throw new BadRequestException(`code为${dto.categoryId}的分类不存在`);
-  //     }
-  //   }
+  /**
+   * 修改文章
+   * @param id
+   * @param dto
+   */
+  async update(id, dto) {
+    const article = await this.articleRepository.findOne(id);
+    if (!article) {
+      throw new BadRequestException(`id为${id}的文章不存在`);
+    }
+    article.title = dto.title;
+    article.description = dto.description;
+    article.isTop = dto.isTop;
+    article.isDraft = dto.isDraft;
+    article.allowComment = dto.allowComment;
+    article.html = dto.html;
+    article.markdown = dto.markdown;
+    const cover = await this.fileRepository.findOne(dto.coverId);
+    if (!cover) {
+      if (!cover) {
+        throw new BadRequestException(`id${dto.categoryId}的文件不存在`);
+      }
+    }
+    article.cover = cover;
+    // 如果有标签
+    if (dto.tags) {
+      const attr = [];
+      for (const item of dto.tags) {
+        const tag = await this.tagRepository.findOne(item);
+        if (!tag) {
+          throw new BadRequestException(`id为${item}的标签不存在`);
+        }
+        attr.push(tag);
+      }
+      article.tags = attr;
+    }
+    // 如果有分类
+    if (dto.categoryId) {
+      const category = await this.categoryRepository.findOne(dto.categoryId);
+      if (!category) {
+        throw new BadRequestException(`code为${dto.categoryId}的分类不存在`);
+      }
+    }
 
-  //   return await this.articleRepository.save(article);
-  // }
+    return await this.articleRepository.save(article);
+  }
 }

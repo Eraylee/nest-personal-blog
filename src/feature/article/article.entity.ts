@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-01 13:48:26
+ * @LastEditTime : 2020-01-28 14:35:55
  */
 import {
   Entity,
@@ -91,7 +91,7 @@ export class ArticleEntity extends BaseEntity {
 
   @OneToOne(type => FileEntity, {
     cascade: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     eager: true,
     nullable: true,

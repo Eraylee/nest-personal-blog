@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-11-17 16:09:01
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-27 13:08:03
+ * @LastEditTime : 2020-01-28 21:02:16
  */
 import {
   Get,
@@ -44,19 +44,23 @@ export class FileController extends BaseController<FileEntity> {
     @UploadedFile() files: CreateFileDto,
     @Body('path') path: string,
   ) {
-    return await this.service.upload(files, path);
+    return {
+      code: 200,
+      message: '上传成功',
+      data: await this.service.upload(files, path),
+    };
   }
   /**
    * 根据id 删除文件
    * @param id
    */
-  @ApiOperation({ title: '通过fid删除文件' })
-  @Delete()
-  async deleteFileByFid(@PlainBody() id: string) {
-    await this.service.removeById(id);
+  @ApiOperation({ title: '删除文件' })
+  @Delete(':id')
+  async deleteFile(@Param('id') id: string) {
     return {
       code: 200,
       message: '删除成功',
+      data: await this.service.removeById(id),
     };
   }
 }

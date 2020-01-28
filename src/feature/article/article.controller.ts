@@ -90,23 +90,23 @@ export class ArticleController extends BaseController<ArticleEntity> {
   //     data: await this.articleService.remove(ids),
   //   };
   // }
-  // /**
-  //  * 修改文章
-  //  * @param id
-  //  * @param article
-  //  */
-  // @ApiOperation({ title: '修改文章' })
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles('admin')
-  // @Put(':id')
-  // async updateArticle(
-  //   @Param('id') id: number,
-  //   @Body() article: UpdateArticleDto,
-  // ) {
-  //   return {
-  //     code: 200,
-  //     message: '修改成功',
-  //     data: await this.articleService.update(id, article),
-  //   };
-  // }
+  /**
+   * 修改文章
+   * @param id
+   * @param article
+   */
+  @ApiOperation({ title: '修改文章' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @Put(':id')
+  async updateArticle(
+    @Param('id') id: string,
+    @Body() article: UpdateArticleDto,
+  ) {
+    return {
+      code: 200,
+      message: '修改成功',
+      data: await this.articleService.update(id, article),
+    };
+  }
 }

@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-06 21:06:33
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-27 14:07:59
+ * @LastEditTime : 2020-01-28 21:08:31
  */
 import {
   Post,
@@ -52,8 +52,8 @@ export class UserController extends BaseController<UserEntity> {
    * @return Promise<Result>
    */
   @ApiOperation({ title: '新增用户' })
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles('admin')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   @Post()
   async create(@Body() user: CreateUserDto) {
     return {
