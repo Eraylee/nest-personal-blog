@@ -35,4 +35,5 @@ export class LinkController extends BaseController<LinkEntity> {
       data: await this.service.create(link),
     };
   }
+  
 }
