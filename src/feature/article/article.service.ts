@@ -13,7 +13,7 @@ import { UserRO } from '../user/user.interface';
 import { FileEntity } from '../file/file.entity';
 import { CategoryEntity } from '../category/category.entity';
 import { BaseService } from '../../common/base';
-import { CreateArticleDto } from './dto';
+import { CreateArticleDto, QueryArticleDto } from './dto';
 
 @Injectable()
 export class ArticleService extends BaseService<ArticleEntity> {
@@ -35,55 +35,54 @@ export class ArticleService extends BaseService<ArticleEntity> {
   ) {
     super(articleRepository);
   }
-  // /**
-  //  * 通过id查询文章
-  //  * @param id
-  //  */
-  // async findById(id: number): Promise<ArticleEntity> {
-  //   const article = await this.articleRepository
-  //     .createQueryBuilder('article')
-  //     .where('article.id = :id', { id })
-  //     .leftJoinAndSelect('article.tags', 'tag')
-  //     .leftJoinAndSelect('article.category', 'category')
-  //     .leftJoinAndSelect('article.user', 'user')
-  //     // .select('category.id')
-  //     .getOne();
-  //   if (!article) {
-  //     throw new NotFoundException('资源不存在');
-  //   }
-  //   return article;
-  // }
-  // /**
-  //  * 查询
-  //  * @param query
-  //  */
-  // async find(query: QueryArticleDto) {
-  //   const qb = await this.articleRepository.createQueryBuilder('article');
-  //   let offset = 0;
-  //   let limit = 10;
-  //   let page = 1;
-  //   qb.where('1 = 1');
 
-  //   if (query.title) {
-  //     qb.andWhere('article.title LIKE :title', { title: `%${query.title}%` });
-  //   }
-  //   if (query.limit) {
-  //     limit = query.limit;
-  //   }
-  //   if (query.page) {
-  //     page = query.page;
-  //     offset = limit * (page - 1);
-  //   }
+  /**
+   * 查询
+   * @param query
+   */
+  async findPage(query: QueryArticleDto) {
+    const qb = await this.articleRepository.createQueryBuilder('article');
+    let offset = 0;
+    let limit = 10;
+    let page = 1;
+    qb.where('1 = 1');
 
-  //   const total = await qb.getCount();
+    if (query.limit) {
+      limit = query.limit;
+    }
+    if (query.page) {
+      page = query.page;
+      offset = limit * (page - 1);
+    }
 
-  //   qb.limit(limit)
-  //     .offset(offset)
-  //     .leftJoinAndSelect('article.tags', 'tag')
-  //     .leftJoinAndSelect('article.category', 'category');
-  //   const data = await qb.getMany();
-  //   return { data, total, page };
-  // }
+    const total = await qb.getCount();
+
+    qb.limit(limit)
+      .offset(offset)
+      .leftJoinAndSelect('article.tags', 'tag')
+      .leftJoinAndSelect('article.category', 'category')
+      .leftJoinAndSelect('article.user', 'user')
+      .leftJoinAndSelect('article.cover', 'cover');
+
+    if (query.title) {
+      qb.andWhere('article.title LIKE :title', { title: query.title });
+    }
+    if (query.categoryId) {
+      qb.andWhere('category.id = :id', { id: query.categoryId });
+    }
+    if (query.html) {
+      qb.andWhere('article.description LIKE :html', {
+        description: query.html,
+      });
+    }
+    if (query.description) {
+      qb.andWhere('article.description LIKE :description', {
+        description: query.description,
+      });
+    }
+    const data = await qb.getMany();
+    return { data, total, page };
+  }
   /**
    * 新增文章
    * @param dto

@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2020-01-16 17:22:25
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2020-01-29 16:05:10
+ */
 import {
   Get,
   Post,
@@ -28,34 +34,20 @@ export class ArticleController extends BaseController<ArticleEntity> {
   constructor(private readonly articleService: ArticleService) {
     super(articleService);
   }
-  // /**
-  //  * 通过id查询文章
-  //  * @param query
-  //  * @return Promise<Result>
-  //  */
-  // @ApiOperation({ title: '通过id查询文章' })
-  // @Get(':id')
-  // async getArticleById(@Param('id') id: number) {
-  //   return {
-  //     code: 200,
-  //     message: '查询成功',
-  //     data: await this.articleService.findById(id),
-  //   };
-  // }
-  // /**
-  //  * 查询文章
-  //  * @param query
-  //  * @return Promise<Result>
-  //  */
-  // @ApiOperation({ title: '查询文章' })
-  // @Get()
-  // async getArticles(@Query() query: QueryArticleDto) {
-  //   return {
-  //     code: 200,
-  //     message: '查询成功',
-  //     data: await this.articleService.find(query),
-  //   };
-  // }
+  /**
+   * 查询文章
+   * @param query
+   * @return Promise<Result>
+   */
+  @ApiOperation({ title: '查询文章' })
+  @Get()
+  async getArticles(@Query() query: QueryArticleDto) {
+    return {
+      code: 200,
+      message: '查询成功',
+      data: await this.articleService.findPage(query),
+    };
+  }
   /**
    * 新增文章
    * @param article
@@ -75,21 +67,7 @@ export class ArticleController extends BaseController<ArticleEntity> {
       data: await this.articleService.createArticle(article, user),
     };
   }
-  // /**
-  //  * 删除文章
-  //  * @param ids
-  //  */
-  // @ApiOperation({ title: '删除文章' })
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles('admin')
-  // @Delete()
-  // async deleteArticles(@Body('ids') ids: number[]) {
-  //   return {
-  //     code: 200,
-  //     message: '删除成功',
-  //     data: await this.articleService.remove(ids),
-  //   };
-  // }
+
   /**
    * 修改文章
    * @param id
