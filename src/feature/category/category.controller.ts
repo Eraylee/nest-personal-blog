@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-10-01 00:46:38
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-27 14:12:56
+ * @LastEditTime : 2020-01-29 13:33:47
  */
 import {
   Get,
@@ -36,7 +36,7 @@ export class CategoryController extends BaseController<CategoryEntity> {
    */
   @ApiOperation({ title: '查询分类' })
   @Get('/all')
-  async getcategorys() {
+  async getCategorys() {
     return {
       code: 200,
       message: '查询成功',
@@ -52,11 +52,26 @@ export class CategoryController extends BaseController<CategoryEntity> {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Post()
-  async createcategory(@Body() category: CreateCategoryDto) {
+  async createCategory(@Body() category: CreateCategoryDto) {
     return {
       code: 200,
       message: '新增成功',
       data: await this.service.create(category),
+    };
+  }
+  /**
+   * 删除分类
+   * @param id
+   */
+  @ApiOperation({ title: '删除分类' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @Delete(':id')
+  async removeCategory(@Param('id') id: string) {
+    return {
+      code: 200,
+      message: '删除成功',
+      data: await this.service.remove(id),
     };
   }
 }

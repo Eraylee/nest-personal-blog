@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-27 13:35:42
+ * @LastEditTime : 2020-01-29 13:53:03
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,5 +38,34 @@ export class CategoryService extends BaseService<CategoryEntity> {
    */
   async findAll(): Promise<CategoryEntity[]> {
     return await this.repository.find();
+  }
+  /**
+   * 新增分类
+   * @param dto
+   */
+  async create(dto) {
+    const parent = await this.repository.findOne(dto.parentId);
+    if (!parent) {
+      throw new BadRequestException(
+        `新增失败，找不到id为${dto.parentId}的父级分类`,
+      );
+    }
+    if (parent.parentId) {
+      throw new BadRequestException(`新增失败，分类无法超过两级`);
+    }
+    const category = new CategoryEntity();
+    Object.assign(category, dto);
+    return await this.repository.save(category);
+  }
+  /**
+   * 删除分类
+   * @param id
+   */
+  async remove(id: string) {
+    const children = await this.repository.find({ parentId: id });
+    if (children.length) {
+      throw new BadRequestException('当前分类含有下级，无法删除');
+    }
+    return await this.repository.delete(id);
   }
 }
