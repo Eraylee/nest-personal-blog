@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-25 21:39:59
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-04 21:42:00
+ * @LastEditTime : 2020-01-29 12:58:05
  */
 import {
   Get,
@@ -70,6 +70,22 @@ export abstract class BaseController<T> {
       code: 200,
       message: '删除成功',
       data: await this.baseService.delete(dto.ids),
+    };
+  }
+  /**
+   * 修改
+   * @param id
+   * @param dto
+   */
+  @ApiOperation({ title: '修改' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @Put(':id')
+  public async update<D>(@Param('id') id: string, @Body() dto: D) {
+    return {
+      code: 200,
+      message: '修改成功',
+      data: await this.baseService.update(id, dto),
     };
   }
 }
