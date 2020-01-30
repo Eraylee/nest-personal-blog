@@ -2,13 +2,13 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-29 16:46:29
+ * @LastEditTime : 2020-01-30 10:42:42
  */
 import { IsArray, IsString } from 'class-validator';
-import { QueryDto } from '../../../common/dto/query.dto';
+import { PaginationDto} from '../../../common/base/base.dto'
 import { ApiModelProperty } from '@nestjs/swagger';
 
-export class QueryArticleDto extends QueryDto {
+export class QueryArticleDto extends PaginationDto {
   @ApiModelProperty({ required: false, description: '文章标题' })
   @IsString()
   readonly title: string;
