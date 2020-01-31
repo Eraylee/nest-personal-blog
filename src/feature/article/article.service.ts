@@ -42,23 +42,22 @@ export class ArticleService extends BaseService<ArticleEntity> {
    */
   async findPage(query: QueryArticleDto) {
     const qb = await this.articleRepository.createQueryBuilder('article');
-    let offset = 0;
-    let limit = 10;
+    let skip = 0;
+    let take = 10;
     let page = 1;
     qb.where('1 = 1');
 
     if (query.limit) {
-      limit = query.limit;
+      take = query.limit;
     }
     if (query.page) {
       page = query.page;
-      offset = limit * (page - 1);
+      skip = take * (page - 1);
     }
-
     const total = await qb.getCount();
 
-    qb.limit(limit)
-      .offset(offset)
+    qb.limit(take)
+      .offset(skip)
       .leftJoinAndSelect('article.tags', 'tag')
       .leftJoinAndSelect('article.category', 'category')
       .leftJoinAndSelect('article.user', 'user')
@@ -81,7 +80,13 @@ export class ArticleService extends BaseService<ArticleEntity> {
       });
     }
     const data = await qb.getMany();
-    return { data, total, page };
+    return {
+      data,
+      total,
+      page,
+      limit: take,
+      maxPage: Math.ceil(total / take),
+    };
   }
   /**
    * 新增文章
@@ -173,6 +178,7 @@ export class ArticleService extends BaseService<ArticleEntity> {
       if (!category) {
         throw new BadRequestException(`code为${dto.categoryId}的分类不存在`);
       }
+      article.category = category;
     }
 
     return await this.articleRepository.save(article);
