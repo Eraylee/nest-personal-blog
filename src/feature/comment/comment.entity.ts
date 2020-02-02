@@ -2,22 +2,13 @@
  * @Author: ERAYLEE
  * @Date: 2019-10-01 01:14:08
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2019-12-29 18:31:44
+ * @LastEditTime : 2020-02-01 12:34:31
  */
-import {
-  Entity,
-  Column,
-  JoinColumn,
-  ManyToOne,
-  Tree,
-  TreeParent,
-  TreeChildren,
-} from 'typeorm';
+import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
 import { BaseEntity } from '../../common/base/base.entity';
 
 @Entity('comment')
-@Tree('materialized-path')
 export class CommentEntity extends BaseEntity {
   @Column({
     length: 32,
@@ -44,13 +35,18 @@ export class CommentEntity extends BaseEntity {
   @Column('text')
   content: string;
 
-  @TreeChildren()
-  children: CommentEntity[];
+  @Column({
+    length: 64,
+    nullable: true,
+  })
+  parentId: string;
 
-  @TreeParent()
-  parent: CommentEntity;
-
-  @ManyToOne(type => ArticleEntity)
+  @ManyToOne(type => ArticleEntity, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
   @JoinColumn()
   article: ArticleEntity;
 }

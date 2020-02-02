@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-28 14:35:55
+ * @LastEditTime : 2020-02-01 12:28:29
  */
 import {
   Entity,
@@ -11,6 +11,7 @@ import {
   ManyToOne,
   ManyToMany,
   OneToOne,
+  OneToMany,
   JoinTable,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
@@ -18,6 +19,7 @@ import { BaseEntity } from '../../common/base';
 import { CategoryEntity } from '../category/category.entity';
 import { FileEntity } from '../file/file.entity';
 import { TagEntity } from '../tag/tag.entity';
+import { CommentEntity } from '../comment/comment.entity';
 
 @Entity('article')
 export class ArticleEntity extends BaseEntity {
@@ -108,4 +110,7 @@ export class ArticleEntity extends BaseEntity {
   })
   @JoinTable()
   tags: TagEntity[];
+
+  @OneToMany(type => CommentEntity, type => ArticleEntity)
+  comment: CommentEntity[];
 }

@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2020-01-16 17:22:25
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2020-02-02 22:22:51
+ */
 import {
   Get,
   Post,
@@ -17,36 +23,26 @@ import { RolesGuard, AuthGuard } from '../../common/guards';
 import { Roles } from '../../common/decorators';
 import { CommentService } from './comment.service';
 import { BaseController } from '../../common/base';
+import { CommentEntity } from './comment.entity';
 
 @ApiBearerAuth()
 @ApiUseTags('comment')
 @Controller('comment')
-export class CommentController {
-  constructor(private readonly commentService: CommentService) {}
-  /**
-   * 通过id查询评论
-   * @param id
-   */
-  @ApiOperation({ title: '通过id查询评论' })
-  @Get(':id')
-  async getComment(@Param('id') id: number) {
-    return {
-      code: 200,
-      message: '查询成功',
-      data: await this.commentService.findById(id),
-    };
+export class CommentController extends BaseController<CommentEntity> {
+  constructor(private readonly service: CommentService) {
+    super(service);
   }
   /**
-   * 通过id查询评论树
+   * 通过文章id查询
    * @param id
    */
-  @ApiOperation({ title: '通过id查询评论树' })
-  @Get(':id/tree')
-  async getCommentTree(@Param('id') id: number) {
+  @ApiOperation({ title: '通过文章id查询' })
+  @Get('/byArticleId/:id')
+  async queryByArticleId(@Param('id') id: string) {
     return {
       code: 200,
       message: '查询成功',
-      data: await this.commentService.findTree(id),
+      data: await this.service.queryByArticleId(id),
     };
   }
   /**
@@ -57,12 +53,13 @@ export class CommentController {
   @ApiOperation({ title: '新增评论' })
   @Post()
   async createComment(@Body() comment: CreateCommentDto, @Req() req: Request) {
-    const ip = '';
+    const ip = req['ip'];
     const agent = '';
+    // const agent = req.headers['user-agent'];
     return {
       code: 200,
       message: '新增成功',
-      data: await this.commentService.create(comment, ip, agent),
+      data: await this.service.createComment(comment, ip, agent),
     };
   }
   /**
@@ -75,28 +72,13 @@ export class CommentController {
   @Roles('admin')
   @Put(':id')
   async updateComment(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() comment: UpdateCommentDto,
   ) {
     return {
       code: 200,
       message: '修改成功',
-      data: await this.commentService.update(id, comment),
-    };
-  }
-  /**
-   * 删除评论
-   * @param id
-   */
-  @ApiOperation({ title: '删除评论' })
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
-  @Delete()
-  async deleteComment(@Body('ids') ids: number[]) {
-    return {
-      code: 200,
-      message: '删除成功',
-      data: await this.commentService.remove(ids),
+      data: await this.service.updateComment(id, comment),
     };
   }
 }

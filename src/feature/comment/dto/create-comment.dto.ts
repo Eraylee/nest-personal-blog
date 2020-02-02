@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2020-01-16 17:22:25
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2020-02-01 11:25:54
+ */
 import {
   IsNotEmpty,
   IsByteLength,
@@ -32,10 +38,10 @@ export class CreateCommentDto {
 
   @ApiModelProperty({ required: false, description: '父级评论id' })
   @Allow()
-  readonly parentId?: number;
+  readonly parentId?: string;
 
   @ApiModelProperty({ description: '文章id' })
   @IsDefined()
   @IsNotEmpty()
-  readonly articleId: number;
+  readonly articleId: string;
 }

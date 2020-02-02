@@ -1,3 +1,9 @@
+/*
+ * @Author: ERAYLEE
+ * @Date: 2020-01-16 17:22:25
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2020-02-01 11:49:29
+ */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, TreeRepository, DeleteResult, Tree } from 'typeorm';
@@ -6,38 +12,29 @@ import { BadRequestException } from '@nestjs/common/exceptions';
 import { ArticleEntity } from '../article/article.entity';
 import { CommentEntity } from './comment.entity';
 import { CreateCommentDto, UpdateCommentDto } from './dto';
-import { BaseController } from '../../common/base';
+import { BaseService } from '../../common/base';
 
 @Injectable()
-export class CommentService {
+export class CommentService extends BaseService<CommentEntity> {
   constructor(
     @InjectRepository(CommentEntity)
-    private readonly commentRepository: TreeRepository<CommentEntity>,
-
-    @InjectRepository(CommentEntity)
+    private readonly repository: Repository<CommentEntity>,
+    @InjectRepository(ArticleEntity)
     private readonly articleRepository: Repository<ArticleEntity>,
-  ) {}
-  /**
-   * 查询评论树
-   * @param id
-   */
-  async findTree(id: number): Promise<CommentEntity> {
-    const comment = await this.commentRepository.findOne(id);
-    if (!comment) {
-      throw new BadRequestException(`id为${id}的评论不存在`);
-    }
-    return this.commentRepository.findDescendantsTree(comment);
+  ) {
+    super(repository);
   }
   /**
-   * 查询评论
-   * @param id
+   * 通过文章id查询评论
+   * @param articleId
    */
-  async findById(id: number): Promise<CommentEntity> {
-    const comment = await this.commentRepository.findOne(id);
-    if (!comment) {
-      throw new BadRequestException(`id为${id}的评论不存在`);
-    }
-    return comment;
+  async queryByArticleId(articleId: string) {
+    const qb = await this.repository
+      .createQueryBuilder('comment')
+      .leftJoin('comment.article', 'article')
+      .where('article.id = :id', { id: articleId })
+      .getMany();
+    return qb;
   }
   /**
    * 创建评论
@@ -45,7 +42,7 @@ export class CommentService {
    * @param ip
    * @param agent
    */
-  async create(
+  async createComment(
     dto: CreateCommentDto,
     ip: string,
     agent: string,
@@ -57,27 +54,31 @@ export class CommentService {
     }
     comment.article = article;
     if ('parentId' in dto) {
-      const parent = await this.commentRepository.findOne(dto.parentId);
+      const parent = await this.repository.findOne(dto.parentId);
       if (!parent) {
         throw new BadRequestException(`id为${dto.parentId}的评论不存在`);
       }
-      comment.parent = parent;
+      comment.parentId = dto.parentId;
     }
     comment.authorIp = ip;
     comment.authorAgent = agent;
     comment.authorMail = dto.authorMail;
     comment.authorName = dto.authorName;
+    comment.content = dto.content;
     if ('authorUrl' in dto) {
       comment.authorUrl = dto.authorUrl;
     }
-    return await this.commentRepository.save(comment);
+    return await this.repository.save(comment);
   }
   /**
    * 修改评论
    * @param dto
    */
-  async update(id: number, dto: UpdateCommentDto): Promise<CommentEntity> {
-    const comment = await this.commentRepository.findOne(id);
+  async updateComment(
+    id: string,
+    dto: UpdateCommentDto,
+  ): Promise<CommentEntity> {
+    const comment = await this.repository.findOne(id);
     if (!comment) {
       throw new BadRequestException(`id为${id}的评论不存在`);
     }
@@ -85,13 +86,6 @@ export class CommentService {
       comment.authorUrl = dto.authorUrl;
     }
     comment.content = dto.content;
-    return await this.commentRepository.save(comment);
-  }
-  /**
-   * 删除评论
-   * @param ids
-   */
-  async remove(ids: number[]): Promise<DeleteResult> {
-    return await this.commentRepository.delete(ids);
+    return await this.repository.save(comment);
   }
 }
