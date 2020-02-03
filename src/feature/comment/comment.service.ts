@@ -2,17 +2,19 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-01 11:49:29
+ * @LastEditTime : 2020-02-03 12:26:14
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, TreeRepository, DeleteResult, Tree } from 'typeorm';
+import { Repository } from 'typeorm';
 import { BadRequestException } from '@nestjs/common/exceptions';
 
 import { ArticleEntity } from '../article/article.entity';
 import { CommentEntity } from './comment.entity';
 import { CreateCommentDto, UpdateCommentDto } from './dto';
 import { BaseService } from '../../common/base';
+
+const parser = require('ua-parser-js');
 
 @Injectable()
 export class CommentService extends BaseService<CommentEntity> {
@@ -61,13 +63,17 @@ export class CommentService extends BaseService<CommentEntity> {
       comment.parentId = dto.parentId;
     }
     comment.authorIp = ip;
-    comment.authorAgent = agent;
+
     comment.authorMail = dto.authorMail;
     comment.authorName = dto.authorName;
     comment.content = dto.content;
     if ('authorUrl' in dto) {
       comment.authorUrl = dto.authorUrl;
     }
+    const ua = parser(agent);
+    const os = `${ua.os.name}.${ua.os.version}`;
+    const browser = `${ua.browser.name}.${ua.browser.major}`;
+    comment.authorAgent = `${os}/${browser}`;
     return await this.repository.save(comment);
   }
   /**

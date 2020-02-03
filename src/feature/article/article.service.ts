@@ -58,6 +58,7 @@ export class ArticleService extends BaseService<ArticleEntity> {
 
     qb.limit(take)
       .offset(skip)
+      .orderBy('article.updatedAt', 'DESC')
       .leftJoinAndSelect('article.tags', 'tag')
       .leftJoinAndSelect('article.category', 'category')
       .leftJoinAndSelect('article.user', 'user')

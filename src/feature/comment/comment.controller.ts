@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-02 22:22:51
+ * @LastEditTime : 2020-02-03 11:42:09
  */
 import {
   Get,
@@ -54,8 +54,7 @@ export class CommentController extends BaseController<CommentEntity> {
   @Post()
   async createComment(@Body() comment: CreateCommentDto, @Req() req: Request) {
     const ip = req['ip'];
-    const agent = '';
-    // const agent = req.headers['user-agent'];
+    const agent = req.headers['user-agent'];
     return {
       code: 200,
       message: '新增成功',
