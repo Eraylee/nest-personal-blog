@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-01 12:28:29
+ * @LastEditTime : 2020-02-03 21:26:53
  */
 import {
   Entity,
@@ -26,12 +26,13 @@ export class ArticleEntity extends BaseEntity {
   @Column({ length: 80 })
   title: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: true })
   description: string;
 
   @Column({
     type: 'boolean',
     default: false,
+    nullable: true,
   })
   isTop: boolean;
 
@@ -50,12 +51,14 @@ export class ArticleEntity extends BaseEntity {
   @Column({
     type: 'boolean',
     default: false,
+    nullable: true,
   })
   isDeleted: boolean;
 
   @Column({
     type: 'boolean',
     default: false,
+    nullable: true,
   })
   isDraft: boolean;
 
@@ -70,6 +73,12 @@ export class ArticleEntity extends BaseEntity {
     default: 0,
   })
   viewsNum: number;
+
+  @Column({
+    length: 60,
+    default: 'normal',
+  })
+  type: string;
 
   @ManyToOne(type => UserEntity, {
     cascade: true,

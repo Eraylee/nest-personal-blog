@@ -2,32 +2,29 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-01 13:53:50
+ * @LastEditTime : 2020-02-04 18:48:26
  */
 import {
-  IsNotEmpty,
   Allow,
-  IsDefined,
   IsBoolean,
   IsUUID,
   IsByteLength,
+  IsEnum,
 } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 import { CreateArticleDto } from './create-article.dto';
 
 export class UpdateArticleDto implements Partial<CreateArticleDto> {
-  @ApiModelProperty({ description: '文章标题' })
-  @IsDefined()
-  @IsNotEmpty()
+  @ApiModelProperty({ required: false, description: '文章标题' })
+  @Allow()
   @IsByteLength(0, 30, {
     message: '标题长度为1~31位',
   })
   readonly title: string;
 
-  @ApiModelProperty({ description: '描述' })
-  @IsDefined()
-  @IsNotEmpty()
+  @ApiModelProperty({ required: false, description: '描述' })
+  @Allow()
   readonly description: string;
 
   @ApiModelProperty({ required: false, description: '是否置顶' })
@@ -37,6 +34,10 @@ export class UpdateArticleDto implements Partial<CreateArticleDto> {
   @ApiModelProperty({ required: false, description: 'html内容' })
   @Allow()
   readonly html: string;
+
+  @ApiModelProperty({ required: false, description: '文章类型' })
+  @IsEnum(['normal', 'message', 'about'])
+  readonly type: string;
 
   @ApiModelProperty({ required: false, description: 'markdown内容' })
   @Allow()
@@ -51,13 +52,13 @@ export class UpdateArticleDto implements Partial<CreateArticleDto> {
   readonly isDraft: boolean;
 
   @ApiModelProperty({ required: false, description: '文章封面id' })
-  @IsUUID()
+  @Allow()
   readonly coverId: string;
 
   @ApiModelProperty({ required: false, description: '文章分类id' })
-  @IsUUID()
+  @Allow()
   readonly categoryId: string;
 
-  @ApiModelProperty({ description: '文章标签id集合' })
+  @ApiModelProperty({ required: false, description: '文章标签id集合' })
   readonly tags: string[];
 }

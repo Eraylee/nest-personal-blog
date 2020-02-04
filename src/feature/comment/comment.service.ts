@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-03 12:26:14
+ * @LastEditTime : 2020-02-03 20:23:45
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,7 +13,7 @@ import { ArticleEntity } from '../article/article.entity';
 import { CommentEntity } from './comment.entity';
 import { CreateCommentDto, UpdateCommentDto } from './dto';
 import { BaseService } from '../../common/base';
-
+// tslint:disable-next-line: no-var-requires
 const parser = require('ua-parser-js');
 
 @Injectable()

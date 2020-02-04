@@ -2,14 +2,15 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-01 13:52:52
+ * @LastEditTime : 2020-02-03 22:04:54
  */
 import {
   IsNotEmpty,
   IsDefined,
   Length,
-  IsUUID,
+  IsString,
   IsBoolean,
+  IsEnum,
 } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 
@@ -21,8 +22,7 @@ export class CreateArticleDto {
   })
   readonly title: string;
 
-  @ApiModelProperty({ description: '描述' })
-  @IsDefined()
+  @ApiModelProperty({ required: false, description: '描述' })
   @Length(0, 29, {
     message: '描述长度为1~30位',
   })
@@ -31,6 +31,10 @@ export class CreateArticleDto {
   @ApiModelProperty({ required: false, description: '是否置顶' })
   @IsBoolean()
   readonly isTop?: boolean;
+
+  @ApiModelProperty({ required: false, description: '文章类型' })
+  @IsEnum(['normal', 'message', 'about'])
+  readonly type: string;
 
   @ApiModelProperty({ required: false, description: 'html内容' })
   @IsDefined()
@@ -51,17 +55,14 @@ export class CreateArticleDto {
   readonly isDraft?: boolean;
 
   @ApiModelProperty({ required: false, description: '文章封面Id' })
-  @IsDefined()
-  @IsUUID()
+  @IsString()
   readonly coverId: string;
 
-  @ApiModelProperty({ description: '文章分类id' })
-  @IsDefined()
-  @IsUUID()
+  @ApiModelProperty({ required: false, description: '文章分类id' })
+  @IsString()
   readonly categoryId: string;
 
-  @ApiModelProperty({ description: '文章标签id集合' })
-  @IsDefined()
+  @ApiModelProperty({ required: false, description: '文章标签id集合' })
   @IsNotEmpty()
   readonly tags: string[];
 }

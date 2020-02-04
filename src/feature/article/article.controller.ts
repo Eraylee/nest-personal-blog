@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
- * @LastEditors: ERAYLEE
- * @LastEditTime: 2020-01-29 16:05:10
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2020-02-04 17:57:20
  */
 import {
   Get,
@@ -18,7 +18,12 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { CreateArticleDto, UpdateArticleDto, QueryArticleDto } from './dto';
+import {
+  CreateArticleDto,
+  UpdateArticleDto,
+  QueryArticleDto,
+  QueryArticlesDto,
+} from './dto';
 
 import { ArticleService } from './article.service';
 import { RolesGuard, AuthGuard } from '../../common/guards';
@@ -41,11 +46,24 @@ export class ArticleController extends BaseController<ArticleEntity> {
    */
   @ApiOperation({ title: '查询文章' })
   @Get()
-  async getArticles(@Query() query: QueryArticleDto) {
+  async getArticles(@Query() query: QueryArticlesDto) {
     return {
       code: 200,
       message: '查询成功',
       data: await this.articleService.findPage(query),
+    };
+  }
+  /**
+   * 查询单个文章
+   * @param query
+   */
+  @ApiOperation({ title: '查询单个文章' })
+  @Get('/special')
+  async getArticle(@Query() query: QueryArticleDto) {
+    return {
+      code: 200,
+      message: '查询成功',
+      data: await this.articleService.queryOne(query),
     };
   }
   /**
