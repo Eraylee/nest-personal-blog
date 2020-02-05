@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-05 11:36:31
+ * @LastEditTime : 2020-02-05 15:00:52
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -100,21 +100,40 @@ export class CommentService extends BaseService<CommentEntity> {
    * @param ids
    */
   async delete(ids: string[]) {
-    const articles = await Promise.all(
+    const deleteIds = await Promise.all(
       ids.map(async v => {
         const comment = await this.repository.findOne(v, {
           relations: ['article'],
         });
-        return comment.article;
+        if (!comment) {
+          throw new BadRequestException(`找不到id为${v}的评论`);
+        }
+        const childrenNums = await this.repository.count({
+          parentId: v,
+        });
+        if (childrenNums > 0) {
+          throw new BadRequestException('此评论含有子评论，无法删除');
+        }
+        --comment.article.meta.comments;
+        await this.articleRepository.save(comment.article);
+        return v;
       }),
     );
-    await Promise.all(
-      articles.map(v => {
-        --v.meta.comments;
-        return this.articleRepository.save(v);
-      }),
-    );
-    const res = await this.repository.delete(ids);
-    return res;
+    return await this.repository.delete(deleteIds);
+  }
+  /**
+   * 软删除
+   * @param ids
+   */
+  async softDelete(ids: string[]) {
+    ids.map(async v => {
+      const comment = await this.repository.findOne(v);
+      comment.isDelete = true;
+      if (comment.content.match('回复@')) {
+        const reply = comment.content.split('</a>:')[0];
+        comment.content = `${reply}</a>: <p>此评论已经删除</p>`;
+      }
+      await this.repository.save(comment);
+    });
   }
 }

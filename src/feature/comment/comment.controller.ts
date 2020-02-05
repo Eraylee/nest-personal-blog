@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-03 11:42:09
+ * @LastEditTime : 2020-02-05 14:53:57
  */
 import {
   Get,
@@ -24,6 +24,7 @@ import { Roles } from '../../common/decorators';
 import { CommentService } from './comment.service';
 import { BaseController } from '../../common/base';
 import { CommentEntity } from './comment.entity';
+import { DeleteDto } from '../../common/base/base.dto';
 
 @ApiBearerAuth()
 @ApiUseTags('comment')
@@ -78,6 +79,21 @@ export class CommentController extends BaseController<CommentEntity> {
       code: 200,
       message: '修改成功',
       data: await this.service.updateComment(id, comment),
+    };
+  }
+  /**
+   * 软删除
+   * @param ids
+   */
+  @ApiOperation({ title: '删除' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @Delete('/soft')
+  public async softDelete(@Body() dto: DeleteDto) {
+    return {
+      code: 200,
+      message: '删除成功',
+      data: await this.service.softDelete(dto.ids),
     };
   }
 }

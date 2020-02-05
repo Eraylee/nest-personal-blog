@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-10-01 01:14:08
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-04 22:48:57
+ * @LastEditTime : 2020-02-05 12:10:57
  */
 import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
@@ -25,6 +25,11 @@ export class CommentEntity extends BaseEntity {
     nullable: true,
   })
   authorUrl: string;
+
+  @Column({
+    nullable: true,
+  })
+  isDelete: boolean;
 
   @Column({ length: 60, nullable: true })
   authorIp: string;
