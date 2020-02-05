@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-09-06 21:06:33
- * @LastEditors: ERAYLEE
- * @LastEditTime: 2019-12-23 08:56:14
+ * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2020-02-05 16:03:21
  */
 import { IsNotEmpty, Matches, IsIn, IsDefined } from 'class-validator';
 import { Transform } from 'class-transformer';
@@ -24,7 +24,6 @@ export class CreateUserDto implements Partial<UserEntity> {
   readonly nickname: string;
 
   @ApiModelProperty({ description: '用户密码' })
-  @IsDefined()
   @Matches(/^[a-zA-Z0-9\-_]\w{5,19}$/, {
     message: '密码不合法',
   })
