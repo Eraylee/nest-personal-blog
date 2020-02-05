@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-10-01 01:14:08
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-01 12:34:31
+ * @LastEditTime : 2020-02-04 22:48:57
  */
 import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
@@ -41,7 +41,7 @@ export class CommentEntity extends BaseEntity {
   })
   parentId: string;
 
-  @ManyToOne(type => ArticleEntity, {
+  @ManyToOne(type => ArticleEntity, type => type.comments, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

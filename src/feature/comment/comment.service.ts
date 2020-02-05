@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-03 20:23:45
+ * @LastEditTime : 2020-02-05 11:36:31
  */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -54,6 +54,7 @@ export class CommentService extends BaseService<CommentEntity> {
     if (!article) {
       throw new BadRequestException(`id为${dto.articleId}的文章不存在`);
     }
+    ++article.meta.comments;
     comment.article = article;
     if ('parentId' in dto) {
       const parent = await this.repository.findOne(dto.parentId);
@@ -63,7 +64,6 @@ export class CommentService extends BaseService<CommentEntity> {
       comment.parentId = dto.parentId;
     }
     comment.authorIp = ip;
-
     comment.authorMail = dto.authorMail;
     comment.authorName = dto.authorName;
     comment.content = dto.content;
@@ -74,6 +74,7 @@ export class CommentService extends BaseService<CommentEntity> {
     const os = `${ua.os.name}.${ua.os.version}`;
     const browser = `${ua.browser.name}.${ua.browser.major}`;
     comment.authorAgent = `${os}/${browser}`;
+    this.articleRepository.save(article);
     return await this.repository.save(comment);
   }
   /**
@@ -93,5 +94,27 @@ export class CommentService extends BaseService<CommentEntity> {
     }
     comment.content = dto.content;
     return await this.repository.save(comment);
+  }
+  /**
+   * 物理删除评论
+   * @param ids
+   */
+  async delete(ids: string[]) {
+    const articles = await Promise.all(
+      ids.map(async v => {
+        const comment = await this.repository.findOne(v, {
+          relations: ['article'],
+        });
+        return comment.article;
+      }),
+    );
+    await Promise.all(
+      articles.map(v => {
+        --v.meta.comments;
+        return this.articleRepository.save(v);
+      }),
+    );
+    const res = await this.repository.delete(ids);
+    return res;
   }
 }

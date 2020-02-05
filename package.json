@@ -5,9 +5,9 @@
   "author": "eraylee",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "build": "rimraf dist && nest build",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "cross-env NODE_ENV=development nodemon",
+    "start": "nest start --watch",
     "start:dev": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
     "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:prod": "node dist/main.js",
@@ -45,6 +45,7 @@
     "ua-parser-js": "^0.7.21"
   },
   "devDependencies": {
+    "@nestjs/cli": "^6.14.1",
     "@nestjs/testing": "6.1.1",
     "@types/express": "4.16.1",
     "@types/jest": "24.0.11",

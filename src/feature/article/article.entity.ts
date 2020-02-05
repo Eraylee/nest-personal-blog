@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-03 21:26:53
+ * @LastEditTime : 2020-02-05 10:10:20
  */
 import {
   Entity,
@@ -63,24 +63,12 @@ export class ArticleEntity extends BaseEntity {
   isDraft: boolean;
 
   @Column({
-    type: 'int',
-    default: 0,
-  })
-  likeNum: number;
-
-  @Column({
-    type: 'int',
-    default: 0,
-  })
-  viewsNum: number;
-
-  @Column({
     length: 60,
     default: 'normal',
   })
   type: string;
 
-  @ManyToOne(type => UserEntity, {
+  @ManyToOne(type => UserEntity, type => type.articles, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
@@ -90,7 +78,7 @@ export class ArticleEntity extends BaseEntity {
   @JoinColumn()
   user: UserEntity;
 
-  @ManyToOne(type => CategoryEntity, {
+  @ManyToOne(type => CategoryEntity, type => type.articles, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
@@ -100,7 +88,7 @@ export class ArticleEntity extends BaseEntity {
   @JoinColumn()
   category: CategoryEntity;
 
-  @OneToOne(type => FileEntity, {
+  @OneToOne(type => FileEntity, type => type.article, {
     cascade: true,
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
@@ -110,7 +98,22 @@ export class ArticleEntity extends BaseEntity {
   @JoinColumn()
   cover: FileEntity;
 
-  @ManyToMany(type => TagEntity, {
+  @Column({
+    type: 'json',
+    default: {
+      view: 0,
+      comments: 0,
+      likes: 0,
+    },
+    nullable: true,
+  })
+  public meta: {
+    views: number;
+    comments: number;
+    likes: number;
+  };
+
+  @ManyToMany(type => TagEntity, type => type.articles, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
@@ -120,6 +123,6 @@ export class ArticleEntity extends BaseEntity {
   @JoinTable()
   tags: TagEntity[];
 
-  @OneToMany(type => CommentEntity, type => ArticleEntity)
-  comment: CommentEntity[];
+  @OneToMany(type => CommentEntity, type => type.article)
+  comments: CommentEntity[];
 }
