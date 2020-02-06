@@ -2,6 +2,12 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
+ * @LastEditTime : 2020-02-06 18:42:14
+ */
+/*
+ * @Author: ERAYLEE
+ * @Date: 2020-01-16 17:22:25
+ * @LastEditors  : ERAYLEE
  * @LastEditTime : 2020-02-05 19:53:32
  */
 import { Injectable } from '@nestjs/common';
@@ -11,7 +17,11 @@ import { BadRequestException } from '@nestjs/common/exceptions';
 
 import { ArticleEntity } from '../article/article.entity';
 import { CommentEntity } from './comment.entity';
-import { CreateCommentDto, UpdateCommentDto } from './dto';
+import {
+  CreateCommentDto,
+  UpdateCommentDto,
+  QueryCommentsByArticleIdDto,
+} from './dto';
 import { BaseService } from '../../common/base';
 // tslint:disable-next-line: no-var-requires
 const parser = require('ua-parser-js');
@@ -26,17 +36,66 @@ export class CommentService extends BaseService<CommentEntity> {
   ) {
     super(repository);
   }
+  //   /**
+  //  * 通过文章id查询评论
+  //  * @param articleId
+  //  */
+  // async queryByArticleId(articleId: string) {
+  //   const qb = await this.repository
+  //     .createQueryBuilder('comment')
+  //     .leftJoin('comment.article', 'article')
+  //     .where('article.id = :id', { id: articleId })
+  //     .getMany();
+  //   return qb;
+  // }
   /**
    * 通过文章id查询评论
    * @param articleId
    */
-  async queryByArticleId(articleId: string) {
-    const qb = await this.repository
+  async queryByArticleId(
+    articleId: string,
+    query: QueryCommentsByArticleIdDto,
+  ) {
+    let skip = 0;
+    let take = 10;
+    let page = 1;
+
+    if (query.limit) {
+      take = query.limit;
+    }
+    if (query.page) {
+      page = query.page;
+      skip = take * (page - 1);
+    }
+
+    const subQuery = await this.repository
       .createQueryBuilder('comment')
+      .limit(take)
+      .offset(skip)
+      .orderBy('comment.createdAt', 'DESC')
       .leftJoin('comment.article', 'article')
-      .where('article.id = :id', { id: articleId })
+      .where('comment.parentId is null')
+      .andWhere('article.id = :id', { id: articleId });
+
+    const parents = await subQuery.getMany();
+    const children = await this.repository
+      .createQueryBuilder('comment')
+      .where(
+        'comment.parentId IN (' +
+          subQuery.select('comment.id').getQuery() +
+          ')',
+      )
+      .setParameters(subQuery.select('comment.id').getParameters())
       .getMany();
-    return qb;
+
+    const total = await subQuery.getCount();
+    return {
+      data: [...parents, ...children],
+      total,
+      page,
+      limit: take,
+      maxPage: Math.ceil(total / take),
+    };
   }
   /**
    * 创建评论
@@ -71,8 +130,8 @@ export class CommentService extends BaseService<CommentEntity> {
       comment.authorUrl = dto.authorUrl;
     }
     const ua = parser(agent);
-    const os = `${ua.os.name}.${ua.os.version}`;
-    const browser = `${ua.browser.name}.${ua.browser.major}`;
+    const os = `${ua.os.name} ${ua.os.version}`;
+    const browser = `${ua.browser.name} ${ua.browser.major}`;
     comment.authorAgent = `${os}/${browser}`;
     this.articleRepository.save(article);
     return await this.repository.save(comment);

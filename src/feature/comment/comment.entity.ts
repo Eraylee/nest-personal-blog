@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-10-01 01:14:08
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-05 12:10:57
+ * @LastEditTime : 2020-02-06 22:11:44
  */
 import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
@@ -41,7 +41,7 @@ export class CommentEntity extends BaseEntity {
   content: string;
 
   @Column({
-    length: 64,
+    type: 'uuid',
     nullable: true,
   })
   parentId: string;
