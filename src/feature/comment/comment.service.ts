@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-07 16:29:50
+ * @LastEditTime : 2020-02-08 11:16:04
  */
 /*
  * @Author: ERAYLEE
@@ -140,7 +140,7 @@ export class CommentService extends BaseService<CommentEntity> {
     comment.content = mint.filterSync(dto.content).text as string;
     const ua = parser(agent);
     const os = `${ua.os.name} ${ua.os.version}`;
-    const browser = `${ua.browser.name} ${ua.browser.major}`;
+    const browser = `${ua.browser.name} ${ua.browser.version}`;
     comment.authorAgent = `${os}/${browser}`;
     this.articleRepository.save(article);
     return await this.repository.save(comment);

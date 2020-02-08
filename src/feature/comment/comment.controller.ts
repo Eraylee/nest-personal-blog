@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-08 11:01:19
+ * @LastEditTime : 2020-02-08 11:08:46
  */
 import {
   Get,
@@ -63,7 +63,6 @@ export class CommentController extends BaseController<CommentEntity> {
   @Post()
   async createComment(@Body() comment: CreateCommentDto, @Req() req: Request) {
     const ip = req.headers['x-real-ip'] || req['connection'].remoteAddress;
-    console.log(req.headers);
     const agent = req.headers['user-agent'];
     return {
       code: 200,
