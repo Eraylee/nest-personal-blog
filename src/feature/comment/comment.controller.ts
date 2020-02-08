@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-08 10:45:49
+ * @LastEditTime : 2020-02-08 10:58:07
  */
 import {
   Get,
@@ -62,7 +62,7 @@ export class CommentController extends BaseController<CommentEntity> {
   @ApiOperation({ title: '新增评论' })
   @Post()
   async createComment(@Body() comment: CreateCommentDto, @Req() req: Request) {
-    const ip = req.headers['x-forwarded-for'] || req['connection'].remoteAddress;
+    const ip = req.headers['x-real-ip'] || req['connection'].remoteAddress;
     const agent = req.headers['user-agent'];
     return {
       code: 200,
