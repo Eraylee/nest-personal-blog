@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
  * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-08 11:16:04
+ * @LastEditTime : 2020-02-09 11:31:16
  */
 /*
  * @Author: ERAYLEE
@@ -194,17 +194,23 @@ export class CommentService extends BaseService<CommentEntity> {
    * @param ids
    */
   async softDelete(ids: string[]) {
-    ids.map(async v => {
-      const comment = await this.repository.findOne(v);
-      comment.isDelete = true;
-      if (comment.content.match('回复@')) {
-        const reply = comment.content.split('</a>:')[0];
-        comment.content = `${reply}</a>: <p>此评论已经删除</p>`;
-      }
-      await this.repository.save(comment);
-    });
+    return Promise.all(
+      ids.map(async v => {
+        const comment = await this.repository.findOne(v);
+        comment.isDelete = true;
+        if (comment.content.match('回复@')) {
+          const reply = comment.content.split('</a>:')[0];
+          comment.content = `${reply}</a>: <p>此评论已经删除</p>`;
+        } else {
+          comment.content = `<p>此评论已经删除</p>`;
+        }
+        await this.repository.save(comment);
+      }),
+    );
   }
-
+  /**
+   * 获取关键字
+   */
   private getWords = async (): Promise<Set<string>> => {
     return new Promise(resolve => {
       const map = new Set<string>();
@@ -215,7 +221,7 @@ export class CommentService extends BaseService<CommentEntity> {
         })
         .on('line', line => {
           if (line) {
-            line = line.replace(/,/g,'')
+            line = line.replace(/,/g, '');
             map.add(line);
           }
         })
