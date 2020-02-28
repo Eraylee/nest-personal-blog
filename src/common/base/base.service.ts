@@ -2,7 +2,7 @@
  * @Author: ERAYLEE
  * @Date: 2019-12-25 21:38:39
  * @LastEditors: ERAYLEE
- * @LastEditTime: 2020-02-28 10:56:52
+ * @LastEditTime: 2020-02-28 12:09:42
  */
 import { NotFoundException, BadGatewayException } from '@nestjs/common';
 import { DeleteResult, Repository, ObjectLiteral } from 'typeorm';
@@ -66,7 +66,7 @@ export abstract class BaseService<T> {
       skip = take * (page - 1);
     }
     const order: any = {
-      updatedAt: query.sort || 'DESC',
+      createdAt: query.sort || 'DESC',
     };
 
     const [data, total] = await this.repo.findAndCount({
