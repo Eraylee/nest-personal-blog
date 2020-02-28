@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-09-29 22:00:48
- * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-05 10:10:20
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2020-02-28 10:59:25
  */
 import {
   Entity,
@@ -101,7 +101,7 @@ export class ArticleEntity extends BaseEntity {
   @Column({
     type: 'json',
     default: {
-      view: 0,
+      views: 0,
       comments: 0,
       likes: 0,
     },

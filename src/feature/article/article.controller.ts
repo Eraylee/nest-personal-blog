@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2020-01-16 17:22:25
- * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-04 17:57:20
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2020-02-28 10:54:53
  */
 import {
   Get,
@@ -54,12 +54,12 @@ export class ArticleController extends BaseController<ArticleEntity> {
     };
   }
   /**
-   * 查询单个文章
+   * 查询单个特殊文章
    * @param query
    */
   @ApiOperation({ title: '查询单个文章' })
   @Get('/special')
-  async getArticle(@Query() query: QueryArticleDto) {
+  async getSpecialArticle(@Query() query: QueryArticleDto) {
     return {
       code: 200,
       message: '查询成功',

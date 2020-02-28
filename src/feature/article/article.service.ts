@@ -91,6 +91,19 @@ export class ArticleService extends BaseService<ArticleEntity> {
       maxPage: Math.ceil(total / take),
     };
   }
+
+    /**
+   * 查询单条数据
+   * @param id
+   */
+  public async getOne(id: string) {
+    const article = await this.articleRepository.findOne(id);
+    if (!article) {
+      throw new NotFoundException('当前资源不存在');
+    }
+    ++ article.meta.views
+    return this.articleRepository.save( article);
+  }
   /**
    * 新增文章
    * @param dto
@@ -238,6 +251,9 @@ export class ArticleService extends BaseService<ArticleEntity> {
         description: query.description,
       });
     }
-    return await qb.getOne();
+    const article = await qb.getOne();
+    ++article.meta.views;
+    console.log(article)
+    return this.articleRepository.save(article);
   }
 }

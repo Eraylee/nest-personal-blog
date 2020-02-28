@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-12-25 21:38:39
- * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-03 14:04:30
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2020-02-28 10:56:52
  */
 import { NotFoundException, BadGatewayException } from '@nestjs/common';
 import { DeleteResult, Repository, ObjectLiteral } from 'typeorm';
@@ -16,7 +16,7 @@ export abstract class BaseService<T> {
    * @param id
    */
   public async getOne(id: string): Promise<T> {
-    const res = this.repo.findOne(id);
+    const res = await this.repo.findOne(id);
     if (!res) {
       throw new NotFoundException('当前资源不存在');
     }
