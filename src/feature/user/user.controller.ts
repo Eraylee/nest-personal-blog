@@ -1,23 +1,12 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-09-06 21:06:33
- * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-02-05 16:03:07
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2020-04-17 17:51:12
  */
-import {
-  Post,
-  Body,
-  Put,
-  Param,
-  Controller,
-  UseGuards,
-} from '@nestjs/common';
+import { Post, Body, Put, Param, Controller, UseGuards } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import {
-  CreateUserDto,
-  LoginUserDto,
-  UpdatePasswordDto,
-} from './dto';
+import { CreateUserDto, LoginUserDto, UpdatePasswordDto } from './dto';
 import { UserService } from './user.service';
 import { RolesGuard, AuthGuard } from '../../common/guards';
 import { Roles } from '../../common/decorators';
@@ -59,7 +48,7 @@ export class UserController extends BaseController<UserEntity> {
     return {
       code: 200,
       message: '新增成功',
-      data: await this.service.create(user),
+      data: await this.service.createUser(user),
     };
   }
   /**

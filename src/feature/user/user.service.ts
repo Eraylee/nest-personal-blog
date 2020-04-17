@@ -9,7 +9,7 @@ import { AuthService } from '../../common/auth/auth.service';
 import { UserEntity } from './user.entity';
 import { BaseService } from '../../common/base';
 import { UserRO } from './user.interface';
-import { LoginUserDto, UpdatePasswordDto } from './dto';
+import { LoginUserDto, UpdatePasswordDto, CreateUserDto } from './dto';
 
 @Injectable()
 export class UserService extends BaseService<UserEntity> {
@@ -124,5 +124,17 @@ export class UserService extends BaseService<UserEntity> {
    */
   private buildPassword(password: string): string {
     return crypto.createHmac('sha256', password).digest('hex');
+  }
+
+  createUser(dto: CreateUserDto) {
+    try {
+      const user = new UserEntity();
+      Object.assign(user, dto, {
+        password: this.config.get('service.DEFAULT_PASSWORD'),
+      });
+      return this.repo.save(user);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-11-17 16:09:01
- * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-28 21:02:16
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2020-04-17 17:56:12
  */
 import {
   Get,
@@ -10,16 +10,17 @@ import {
   Body,
   Delete,
   Controller,
-  Query,
+  UseGuards,
   UseInterceptors,
   UploadedFile,
   Param,
 } from '@nestjs/common';
-import { PlainBody } from '../../common/decorators';
+import { Roles } from '../../common/decorators';
+import { RolesGuard, AuthGuard } from '../../common/guards';
 import { ApiUseTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
-import { CreateFileDto, QueryFileDto } from './dto';
+import { CreateFileDto } from './dto';
 import { FileService } from './file.service';
 import { BaseController } from '../../common/base';
 import { FileEntity } from './file.entity';
@@ -31,13 +32,14 @@ export class FileController extends BaseController<FileEntity> {
   constructor(private readonly service: FileService) {
     super(service);
   }
-
   /**
    * 上传文件
    * @param files
    * @param path
    */
   @ApiOperation({ title: '上传文件' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
@@ -55,6 +57,8 @@ export class FileController extends BaseController<FileEntity> {
    * @param id
    */
   @ApiOperation({ title: '删除文件' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   async deleteFile(@Param('id') id: string) {
     return {
