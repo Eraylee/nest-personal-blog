@@ -1,8 +1,8 @@
 /*
  * @Author: ERAYLEE
  * @Date: 2019-12-22 22:25:46
- * @LastEditors  : ERAYLEE
- * @LastEditTime : 2020-01-12 16:37:25
+ * @LastEditors: ERAYLEE
+ * @LastEditTime: 2020-04-18 13:09:35
  */
 import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '../../common/base/base.entity';
@@ -18,7 +18,7 @@ export class LinkEntity extends BaseEntity {
 
   @OneToOne(type => FileEntity, {
     cascade: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     eager: true,
     nullable: true,
