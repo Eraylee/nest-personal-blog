@@ -19,6 +19,8 @@ export class FileService extends BaseService<FileEntity> {
     super(repository);
 
     this.client = new OSS({
+      cname: true,
+      endpoint: config.get('ali-oss.OSS_ENDPOINT'),
       region: config.get('ali-oss.OSS_REGION'),
       accessKeyId: config.get('ali-oss.OSS_ACCESS_KEY_ID'),
       accessKeySecret: config.get('ali-oss.OSS_ACCESS_KEY_SECRET'),
@@ -100,7 +102,7 @@ export class FileService extends BaseService<FileEntity> {
         throw new BadRequestException(`id${id}的文件不存在`);
       }
       const aliOSSresponse = await this.client.get(file.fileName);
-      if (aliOSSresponse && aliOSSresponse.res.status === 200) {
+      if (aliOSSresponse.res.status === 200) {
         await this.client.delete(file.fileName);
         return await this.repository.remove(file);
       }
